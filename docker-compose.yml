@@ -7,9 +7,9 @@ services:
     container_name: vibe-postgres
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER}         # Comes from GitHub Secret
-      POSTGRES_PASSWORD: ${DB_PASSWORD} # Comes from GitHub Secret
-      POSTGRES_DB: ${DB_NAME}
+      - POSTGRES_USER=${DB_USER}         # Comes from GitHub Secret
+      - POSTGRES_PASSWORD=${DB_PASSWORD} # Comes from GitHub Secret
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -26,8 +26,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      - MINIO_ROOT_USER: ${MINIO_ROOT_USER}         # Comes from GitHub Secret
-      - MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} # Comes from GitHub Secret
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}         # Comes from GitHub Secret
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD} # Comes from GitHub Secret
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
