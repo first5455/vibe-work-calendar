@@ -15,6 +15,13 @@
       "when": 1765880170252,
       "tag": "0001_steep_elektra",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1765909234788,
+      "tag": "0002_nervous_leader",
+      "breakpoints": true
     }
   ]
 }

@@ -66,7 +66,25 @@ export default function TeamView() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teams.map((team) => (
+        {teams.length === 0 ? (
+           <div className="col-span-full py-16 flex flex-col items-center justify-center text-center bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+               <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/20 rounded-full flex items-center justify-center mb-4">
+                   <User className="w-8 h-8 text-indigo-500 dark:text-indigo-400" />
+               </div>
+               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Teams Yet</h3>
+               <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-6">
+                   Get started by creating your first team to manage members and track leave requests.
+               </p>
+               <button 
+                onClick={handleCreateTeam}
+                className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm shadow-indigo-200 transition-all font-medium"
+               >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Create Team
+               </button>
+           </div>
+        ) : (
+            teams.map((team) => (
           <div key={team.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow p-6 group">
              <div className="flex items-start justify-between">
                  <div className="flex items-center space-x-3">
@@ -107,7 +125,7 @@ export default function TeamView() {
                   </Link>
              </div>
           </div>
-        ))}
+        )))}
       </div>
     </div>
   );

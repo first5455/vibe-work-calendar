@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 (2025-12-17)
+
+### Improvements
+- **Empty Team State**: Added a helpful empty state screen in the Teams view to guide users when no teams exist.
+
 ## 1.1.0 (2025-12-17)
 
 ### Key Features
