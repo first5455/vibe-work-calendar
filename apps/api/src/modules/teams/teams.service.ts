@@ -135,5 +135,14 @@ export const TeamService = {
               
           return team;
       });
+  },
+
+  async updateTeam(teamId: string, data: { name?: string; logoUrl?: string }) {
+      const [team] = await db
+        .update(teams)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(teams.id, teamId))
+        .returning();
+      return team;
   }
 };

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../api/client";
-import { Plus, Calendar, ArrowRight, Clock, CheckCircle, XCircle, Trash2, Edit2, AlertTriangle, Paperclip, ArrowLeft, User, Shield, Crown, UserPlus, MoreVertical, Repeat } from "lucide-react";
+import { Calendar, ArrowRight, Trash2, Paperclip, ArrowLeft, User, Shield, Crown, UserPlus, MoreVertical, Repeat } from "lucide-react";
 import LeaveRequestModal from "../request/LeaveRequestModal";
 import AddMemberModal from "./AddMemberModal";
 import { useAuth } from "../../hooks/useAuth";
+import AvatarUpload from "../../components/upload/AvatarUpload";
 
 export default function TeamDetailPage() {
     const { teamId } = useParams();
@@ -103,9 +104,26 @@ export default function TeamDetailPage() {
                     <ArrowLeft className="w-4 h-4 mr-1" /> Back
                 </button>
                 <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 overflow-hidden font-bold">
-                        {team.name.charAt(0)}
-                    </div>
+                    {isOwnerOrAdmin ? (
+                        <AvatarUpload 
+                            currentAvatarUrl={team.logoUrl}
+                            onAvatarUpdate={(url) => setTeam({ ...team, logoUrl: url })}
+                            onSave={async (url) => {
+                                const { error } = await (api.teams as any)({ id: teamId }).patch({ logoUrl: url });
+                                if (error) throw error;
+                            }}
+                            className="w-16 h-16"
+                        />
+                    ) : (
+                        <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 overflow-hidden font-bold border-2 border-gray-200 dark:border-gray-700">
+                             {team.logoUrl ? (
+                                <img src={team.logoUrl} alt={team.name} className="w-full h-full object-cover" />
+                             ) : (
+                                <span className="text-2xl">{team.name.charAt(0)}</span>
+                             )}
+                        </div>
+                    )}
+                    
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{team.name}</h1>
                         <p className="text-gray-500 dark:text-gray-400">{team.memberCount} members</p>
@@ -115,8 +133,8 @@ export default function TeamDetailPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Members Section */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden h-fit">
-                    <div className="px-6 py-4 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 flex justify-between items-center">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 h-fit">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 flex justify-between items-center rounded-t-xl">
                         <h3 className="font-semibold text-gray-900 dark:text-white">Team Members</h3>
                         {isOwnerOrAdmin && (
                             <button 

@@ -43,7 +43,17 @@ const createCroppedImg = async (imageSrc: string, pixelCrop: any) => {
   });
 };
 
-export default function AvatarUpload({ currentAvatarUrl, onAvatarUpdate }: { currentAvatarUrl?: string, onAvatarUpdate: (newUrl: string) => void }) {
+export default function AvatarUpload({ 
+    currentAvatarUrl, 
+    onAvatarUpdate,
+    onSave,
+    className = "w-24 h-24"
+}: { 
+    currentAvatarUrl?: string, 
+    onAvatarUpdate: (newUrl: string) => void,
+    onSave?: (url: string) => Promise<any>,
+    className?: string
+}) {
     const [isOpen, setIsOpen] = useState(false);
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -73,7 +83,7 @@ export default function AvatarUpload({ currentAvatarUrl, onAvatarUpdate }: { cur
         });
     };
 
-    const handleSave = async () => {
+    const handleSaveImage = async () => {
         if (!imageSrc || !croppedAreaPixels) return;
         setLoading(true);
         try {
@@ -84,7 +94,6 @@ export default function AvatarUpload({ currentAvatarUrl, onAvatarUpdate }: { cur
             formData.append("file", croppedBlob, "avatar.jpg");
             formData.append("folder", "avatars");
 
-            // Upload directly using fetch to ensure FormData is handled correctly
             const response = await fetch("http://localhost:3000/uploads", {
                 method: "POST",
                 body: formData
@@ -98,9 +107,13 @@ export default function AvatarUpload({ currentAvatarUrl, onAvatarUpdate }: { cur
             const data = await response.json();
 
             if (data) {
-                // Update user profile
-                const { error: updateError } = await (api.users as any).me.patch({ avatarUrl: data.url });
-                if (updateError) throw updateError;
+                if (onSave) {
+                    await onSave(data.url);
+                } else {
+                    // Default behavior: Update user profile
+                    const { error: updateError } = await (api.users as any).me.patch({ avatarUrl: data.url });
+                    if (updateError) throw updateError;
+                }
                 
                 onAvatarUpdate(data.url);
                 setIsOpen(false);
@@ -117,10 +130,9 @@ export default function AvatarUpload({ currentAvatarUrl, onAvatarUpdate }: { cur
 
     return (
         <div>
-            <div className="relative group w-24 h-24 mx-auto cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
+            <div className={`relative group mx-auto cursor-pointer ${className}`} onClick={() => fileInputRef.current?.click()}>
+                <div className={`w-full h-full rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800`}>
                     {currentAvatarUrl ? (
-                         // Ensure we use the full URL if it's relative
                         <img 
                             src={currentAvatarUrl} 
                             alt="Avatar" 
@@ -128,12 +140,12 @@ export default function AvatarUpload({ currentAvatarUrl, onAvatarUpdate }: { cur
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <Camera className="w-8 h-8" />
+                            <Camera className="w-1/3 h-1/3" />
                         </div>
                     )}
                 </div>
                 <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="w-6 h-6 text-white" />
+                    <Camera className="w-1/3 h-1/3 text-white" />
                 </div>
                 <input 
                     type="file" 
@@ -190,7 +202,7 @@ export default function AvatarUpload({ currentAvatarUrl, onAvatarUpdate }: { cur
                                     Cancel
                                 </button>
                                 <button 
-                                    onClick={handleSave}
+                                    onClick={handleSaveImage}
                                     disabled={loading}
                                     className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm flex items-center"
                                 >

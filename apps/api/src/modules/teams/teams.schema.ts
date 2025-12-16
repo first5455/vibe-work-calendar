@@ -17,3 +17,8 @@ export const UpdateMemberRoleSchema = t.Object({
 export const TransferOwnershipSchema = t.Object({
   newOwnerId: t.String(),
 });
+
+export const UpdateTeamSchema = t.Object({
+    name: t.Optional(t.String()),
+    logoUrl: t.Optional(t.String())
+});
