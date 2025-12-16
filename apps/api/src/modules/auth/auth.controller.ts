@@ -94,7 +94,7 @@ export const authController = new Elysia({ prefix: "/auth" })
           sameSite: "lax",
       });
 
-      return Response.redirect("http://localhost:5173/dashboard");
+      return Response.redirect(`${config.FRONTEND_URL}/dashboard`);
   }, {
       query: CallbackSchema
   });
