@@ -4,6 +4,7 @@ import LoginPage from './features/auth/LoginPage';
 import DashboardPage from './features/dashboard/DashboardPage';
 import TeamView from './features/team/TeamView';
 import TeamDetailPage from './features/team/TeamDetailPage';
+import PersonalPage from './features/personal/PersonalPage';
 import { ThemeProvider } from "./context/ThemeContext";
 import SettingsPage from "./features/settings/SettingsPage";
 import RequireAuth from './components/layout/RequireAuth';
@@ -23,6 +24,7 @@ function App() {
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="team" element={<TeamView />} />
             <Route path="team/:teamId" element={<TeamDetailPage />} />
+            <Route path="personal" element={<PersonalPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Routes>

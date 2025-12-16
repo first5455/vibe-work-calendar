@@ -5,7 +5,7 @@ import { config } from "../../config/env";
 
 export const LeaveService = {
   async createLeaveRequest(userId: string, data: { 
-      teamId: string, 
+      teamId?: string, 
       type: "SICK" | "VACATION" | "PERSONAL", 
       startDate: string, 
       endDate: string, 

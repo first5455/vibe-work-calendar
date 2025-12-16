@@ -61,11 +61,14 @@ export default function LeaveRequestModal({ isOpen, onClose, initialData, onSucc
     }
     setLoading(true);
     try {
+        const payload = { ...formData };
+        if (!payload.teamId) delete (payload as any).teamId;
+
         if (initialData) {
-            const { error }: any = await (api.leaves as any)({ id: initialData.id }).patch(formData);
+            const { error }: any = await (api.leaves as any)({ id: initialData.id }).patch(payload);
             if (error) throw error;
         } else {
-            const { error } = await (api.leaves as any).index.post(formData);
+            const { error } = await (api.leaves as any).index.post(payload);
             if (error) throw error;
         }
         
@@ -104,9 +107,8 @@ export default function LeaveRequestModal({ isOpen, onClose, initialData, onSucc
                             className="w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-gray-900 dark:text-white"
                             value={formData.teamId}
                             onChange={(e) => setFormData({ ...formData, teamId: e.target.value })}
-                            required
                         >
-                            <option value="" disabled>Select a team</option>
+                            <option value="">Personal (No Project)</option>
                             {teams.map(t => (
                                 <option key={t.id} value={t.id}>{t.name}</option>
                             ))}

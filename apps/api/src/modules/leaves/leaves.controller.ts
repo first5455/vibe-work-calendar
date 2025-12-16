@@ -8,10 +8,12 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
   .use(authGuard)
   .post("/", async ({ body, user, set }) => {
       // Check if user is member of the team
-      const isMember = await TeamService.isMember(user.sub as string, body.teamId);
-      if (!isMember) {
-          set.status = 403;
-          throw new Error("You must be a member of the team to request leave.");
+      if (body.teamId) {
+          const isMember = await TeamService.isMember(user.sub as string, body.teamId);
+          if (!isMember) {
+              set.status = 403;
+              throw new Error("You must be a member of the team to request leave.");
+          }
       }
       return await LeaveService.createLeaveRequest(user.sub as string, body as any);
   }, {
@@ -43,7 +45,7 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
       // 1. User is the creator of the request
       // 2. User is Admin/Owner of the team
       const isCreator = leave.userId === user.sub;
-      const canManage = await LeaveService.canApprove(user.sub as string, leave.teamId);
+      const canManage = leave.teamId ? await LeaveService.canApprove(user.sub as string, leave.teamId) : false;
 
       if (!isCreator && !canManage) {
           set.status = 403;
@@ -65,7 +67,7 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
       // 1. User is the creator of the request
       // 2. User is Admin/Owner of the team
       const isCreator = leave.userId === user.sub;
-      const canManage = await LeaveService.canApprove(user.sub as string, leave.teamId);
+      const canManage = leave.teamId ? await LeaveService.canApprove(user.sub as string, leave.teamId) : false;
 
       if (!isCreator && !canManage) {
           set.status = 403;

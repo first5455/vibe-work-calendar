@@ -1,7 +1,7 @@
 import { t } from "elysia";
 
 export const CreateLeaveSchema = t.Object({
-  teamId: t.String(),
+  teamId: t.Optional(t.String()),
   type: t.Union([t.Literal("SICK"), t.Literal("VACATION"), t.Literal("PERSONAL")]),
   startDate: t.String(), // YYYY-MM-DD
   endDate: t.String(), // YYYY-MM-DD

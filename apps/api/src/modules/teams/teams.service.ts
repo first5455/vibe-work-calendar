@@ -1,5 +1,5 @@
 import { db } from "../../db";
-import { teams, teamMembers, users } from "../../db/schema";
+import { teams, teamMembers, users, leaves } from "../../db/schema";
 import { eq, and, sql } from "drizzle-orm";
 
 export const TeamService = {
@@ -144,5 +144,19 @@ export const TeamService = {
         .where(eq(teams.id, teamId))
         .returning();
       return team;
+  },
+  
+  async deleteTeam(teamId: string) {
+      await db.transaction(async (tx) => {
+          // Delete all members
+          await tx.delete(teamMembers).where(eq(teamMembers.teamId, teamId));
+          
+          // Delete all team leaves
+          await tx.delete(leaves).where(eq(leaves.teamId, teamId));
+
+          // Delete the team itself
+          await tx.delete(teams).where(eq(teams.id, teamId));
+      });
+      return { success: true };
   }
 };

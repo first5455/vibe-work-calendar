@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { Calendar, Users, LogOut, Settings, Moon, Sun } from "lucide-react";
+import { Calendar, Users, LogOut, Settings, Moon, Sun, User } from "lucide-react";
 import { api } from "../../api/client";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -28,6 +28,7 @@ export default function Layout() {
         <nav className="p-4 space-y-1">
           <NavLink to="/dashboard" icon={<Calendar className="w-5 h-5" />} label="Calendar" />
           <NavLink to="/team" icon={<Users className="w-5 h-5" />} label="Team" />
+          <NavLink to="/personal" icon={<User className="w-5 h-5" />} label="Personal" />
           <NavLink to="/settings" icon={<Settings className="w-5 h-5" />} label="Settings" />
         </nav>
         <div className="absolute bottom-0 w-64 p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">

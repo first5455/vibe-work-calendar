@@ -55,6 +55,26 @@ export default function TeamDetailPage() {
         }
     };
 
+    const handleDeleteTeam = async () => {
+        if (!team) return;
+        if (!confirm(`Are you sure you want to delete team "${team.name}"? This action cannot be undone and will delete all members and leaves associated with this team.`)) return;
+        
+        const confirmName = prompt(`Please type "${team.name}" to confirm deletion.`);
+        if (confirmName !== team.name) {
+            if (confirmName !== null) alert("Team name does not match.");
+            return;
+        }
+
+        try {
+            const { error }: any = await (api.teams as any)({ id: teamId }).delete();
+            if (error) throw error;
+            navigate("/team");
+        } catch (e) {
+            console.error("Failed to delete team", e);
+            alert("Failed to delete team: " + (e as Error).message);
+        }
+    };
+
     const [editLeave, setEditLeave] = useState<any>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
@@ -102,7 +122,8 @@ export default function TeamDetailPage() {
                 <button onClick={() => navigate(-1)} className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-4 transition-colors">
                     <ArrowLeft className="w-4 h-4 mr-1" /> Back
                 </button>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
                     {isOwnerOrAdmin ? (
                         <AvatarUpload 
                             currentAvatarUrl={team.logoUrl}
@@ -127,6 +148,16 @@ export default function TeamDetailPage() {
                         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{team.name}</h1>
                         <p className="text-gray-500 dark:text-gray-400">{team.memberCount} members</p>
                     </div>
+                    </div>
+                     {team.role === 'OWNER' && (
+                        <button 
+                            onClick={handleDeleteTeam}
+                            className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40 rounded-lg transition-colors border border-red-200 dark:border-red-800 ml-4"
+                        >
+                            <Trash2 className="w-4 h-4 inline-block mr-2" />
+                            Delete Team
+                        </button>
+                     )}
                 </div>
             </div>
 

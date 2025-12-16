@@ -98,4 +98,12 @@ export const teamsController = new Elysia({ prefix: "/teams" })
       return await TeamService.transferOwnership(id, user.sub as string, body.newOwnerId);
   }, {
       body: TransferOwnershipSchema
+  })
+  .delete("/:id", async ({ params: { id }, user, set }) => {
+      const role = await TeamService.getMemberRole(user.sub as string, id);
+      if (role !== "OWNER") {
+          set.status = 403;
+          throw new Error("Only team owner can delete the team");
+      }
+      return await TeamService.deleteTeam(id);
   });
