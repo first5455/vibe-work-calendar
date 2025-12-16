@@ -1,0 +1,34 @@
+name: Deploy Vibe Calendar
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: self-hosted 
+    # ^ Since this runner is ONLY attached to this repo, 
+    # "self-hosted" automatically finds the correct "home-server-calendar" runner.
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 1. GENERATE THE .ENV FILE
+      # This takes your Secret block and writes it to a file named ".env"
+      # right next to docker-compose.yml on the server.
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.PROD_ENV_FILE }}" > .env
+
+      # 2. DEPLOY
+      # Docker Compose automatically reads the ".env" file we just created
+      # to fill in the ${VARIABLES}
+      - name: Deploy with Docker Compose
+        run: |
+          docker compose down
+          docker compose up -d --build --force-recreate
+
+      # 3. CLEANUP
+      - name: Prune Docker Images
+        run: docker system prune -f

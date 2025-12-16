@@ -24,6 +24,7 @@ export type App = typeof app;
 // Initialize MinIO bucket
 await UploadService.initializeBucket();
 
-app.listen(3000, () => {
-  console.log("🦊 Elysia is running at localhost:3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🦊 Elysia is running at localhost:${PORT}`);
 });

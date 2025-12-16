@@ -4,7 +4,7 @@ import { treaty } from "@elysiajs/eden";
 // Since it's a monorepo, we can import the type directly if valid.
 import type { App } from "../../../api/src/index";
 
-export const api = treaty<App>("http://localhost:3000", {
+export const api = treaty<App>(import.meta.env.VITE_API_URL || "http://localhost:3000", {
     fetch: {
         credentials: "include"
     }

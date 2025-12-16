@@ -1,30 +1,71 @@
 version: "3.8"
 
 services:
+  # --- Infrastructure ---
   postgres:
     image: postgres:16-alpine
     container_name: vibe-postgres
-    ports:
-      - "5432:5432"
+    restart: always
     environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-vibe_calendar}
+      POSTGRES_USER: ${DB_USER}         # Comes from GitHub Secret
+      POSTGRES_PASSWORD: ${DB_PASSWORD} # Comes from GitHub Secret
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   minio:
     image: minio/minio
     container_name: vibe-minio
+    restart: always
     ports:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}         # Comes from GitHub Secret
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} # Comes from GitHub Secret
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
+
+  # --- Apps ---
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: vibe-calendar-api
+    restart: always
+    ports:
+      - "8082:3000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - 
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      # --- ADD THIS ARGS BLOCK ---
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_PORT: ${VITE_PORT}
+      # ---------------------------
+    container_name: vibe-calendar-web
+    restart: always
+    ports:
+      - "5175:5175"
 
 volumes:
   postgres_data:
