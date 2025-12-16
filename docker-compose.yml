@@ -63,7 +63,7 @@ services:
     container_name: vibe-calendar-web
     restart: always
     ports:
-      - "8081:80"
+      - "8083:80"
 
 volumes:
   postgres_data:
