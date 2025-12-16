@@ -6,6 +6,8 @@ services:
     image: postgres:16-alpine
     container_name: vibe-postgres
     restart: always
+    ports:
+    - "5432:5432"
     environment:
       - POSTGRES_USER=${DB_USER}         # Comes from GitHub Secret
       - POSTGRES_PASSWORD=${DB_PASSWORD} # Comes from GitHub Secret
