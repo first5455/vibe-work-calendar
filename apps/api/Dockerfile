@@ -9,7 +9,7 @@ COPY package.json bun.lock ./
 COPY apps/api ./apps/api
 
 # 3. Install dependencies
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # 4. Start the server
 WORKDIR /app/apps/api
