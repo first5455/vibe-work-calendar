@@ -14,7 +14,8 @@ COPY apps/web/package.json ./apps/web/package.json
 # 2. Install dependencies (Now it works!)
 RUN bun install --frozen-lockfile
 
-# 3. Copy the Web Source Code
+# 3. Copy the Web Source Code and API Source (for types)
+COPY apps/api ./apps/api
 COPY apps/web ./apps/web
 
 # 4. Accept Build Variables
