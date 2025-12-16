@@ -59,12 +59,11 @@ services:
 
       args:
         VITE_API_URL: ${VITE_API_URL}
-        VITE_PORT: ${VITE_PORT}
 
     container_name: vibe-calendar-web
     restart: always
     ports:
-      - "5175:5175"
+      - "8081:80"
 
 volumes:
   postgres_data:
