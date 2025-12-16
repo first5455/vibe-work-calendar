@@ -24,13 +24,14 @@
         "postgres": "latest",
       },
       "devDependencies": {
+        "@types/node": "^25.0.2",
         "bun-types": "latest",
         "drizzle-kit": "latest",
       },
     },
     "apps/web": {
       "name": "web",
-      "version": "0.0.0",
+      "version": "1.0.0",
       "dependencies": {
         "@elysiajs/eden": "^1.4.5",
         "clsx": "^2.1.1",

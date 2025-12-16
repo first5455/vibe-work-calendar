@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
-import { X, Search, Check, UserPlus } from "lucide-react";
+import { X, Search, UserPlus } from "lucide-react";
 import { api } from "../../api/client";
 
 export default function AddMemberModal({ isOpen, onClose, teamId, onSuccess }: { isOpen: boolean; onClose: () => void, teamId: string, onSuccess?: () => void }) {
+// ...
+    try {
+        const { error: reqError } = await (api.teams as any)({ id: teamId }).members.post({
+            userId: selectedUser.id,
+            role
+        });
+        
+        if (reqError) throw reqError;
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);

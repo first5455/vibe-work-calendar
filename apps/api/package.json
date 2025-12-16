@@ -19,6 +19,7 @@
     "postgres": "latest"
   },
   "devDependencies": {
+    "@types/node": "^25.0.2",
     "bun-types": "latest",
     "drizzle-kit": "latest"
   }

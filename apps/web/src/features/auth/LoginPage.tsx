@@ -1,6 +1,5 @@
 import { Github } from "lucide-react";
 
-import { api } from "../../api/client";
 
 export default function LoginPage() {
   const handleLogin = (provider: "google" | "github") => {

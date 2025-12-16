@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Paperclip, X, File, AlertCircle } from "lucide-react";
+import { Paperclip, X, File } from "lucide-react";
 import { api } from "../../api/client";
 
 interface UploadedFile {
