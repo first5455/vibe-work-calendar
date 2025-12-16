@@ -6,11 +6,14 @@ export const CreateLeaveSchema = t.Object({
   startDate: t.String(), // YYYY-MM-DD
   endDate: t.String(), // YYYY-MM-DD
   reason: t.Optional(t.String()),
+  attachments: t.Optional(t.Array(t.Object({
+      fileKey: t.String(),
+      originalName: t.String(),
+      mimeType: t.String(),
+      fileUrl: t.String()
+  })))
 });
 
-export const UpdateLeaveStatusSchema = t.Object({
-  status: t.Union([t.Literal("APPROVED"), t.Literal("REJECTED")]),
-});
 
 export const UpdateLeaveSchema = t.Object({
   type: t.Optional(t.Union([t.Literal("SICK"), t.Literal("VACATION"), t.Literal("PERSONAL")])),

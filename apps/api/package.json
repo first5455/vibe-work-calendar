@@ -7,8 +7,10 @@
     "migrate": "bun run src/db/migrate.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.952.0",
     "@elysiajs/cors": "latest",
     "@elysiajs/jwt": "^1.4.0",
+    "@elysiajs/static": "^1.4.7",
     "@elysiajs/swagger": "latest",
     "@sinclair/typebox": "^0.34.41",
     "drizzle-orm": "latest",

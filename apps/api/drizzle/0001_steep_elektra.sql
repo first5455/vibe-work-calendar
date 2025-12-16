@@ -1,0 +1,1 @@
+ALTER TABLE "leaves" DROP COLUMN "status";

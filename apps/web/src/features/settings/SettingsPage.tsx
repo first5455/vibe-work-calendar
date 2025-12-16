@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { api } from "../../api/client";
+import AvatarUpload from "../../components/upload/AvatarUpload";
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         displayName: "",
-        email: "" // Read only
+        email: "", // Read only
+        avatarUrl: ""
     });
 
     useEffect(() => {
@@ -15,7 +17,8 @@ export default function SettingsPage() {
                 if (data) {
                     setFormData({
                         displayName: data.displayName,
-                        email: data.email
+                        email: data.email,
+                        avatarUrl: data.avatarUrl
                     });
                 }
             } catch (e) {
@@ -45,7 +48,15 @@ export default function SettingsPage() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h2>
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Profile</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Profile</h3>
+                
+                <div className="mb-8 flex justify-center">
+                    <AvatarUpload 
+                        currentAvatarUrl={formData.avatarUrl} 
+                        onAvatarUpdate={(newUrl) => setFormData(prev => ({ ...prev, avatarUrl: newUrl }))} 
+                    />
+                </div>
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Display Name</label>

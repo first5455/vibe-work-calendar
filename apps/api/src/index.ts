@@ -1,10 +1,13 @@
 import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
+import { swagger } from "@elysiajs/swagger";
 import { authController } from "./modules/auth/auth.controller";
 import { teamsController } from "./modules/teams/teams.controller";
 import { leavesController } from "./modules/leaves/leaves.controller";
 import { usersController } from "./modules/users/users.controller";
-import { cors } from "@elysiajs/cors";
-import { swagger } from "@elysiajs/swagger";
+import { uploadsController } from "./modules/uploads/uploads.controller";
+import { UploadService } from "./modules/uploads/uploads.service";
+import { staticPlugin } from "@elysiajs/static";
 
 const app = new Elysia()
   .use(cors())
@@ -13,9 +16,13 @@ const app = new Elysia()
   .use(teamsController)
   .use(leavesController)
   .use(usersController)
+  .use(uploadsController)
   .get("/", () => "Hello Elysia");
 
 export type App = typeof app;
+
+// Initialize MinIO bucket
+await UploadService.initializeBucket();
 
 app.listen(3000, () => {
   console.log("🦊 Elysia is running at localhost:3000");

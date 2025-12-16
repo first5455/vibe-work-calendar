@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { authGuard } from "../../middlewares/auth";
 import { TeamService } from "./teams.service";
-import { CreateTeamSchema, AddMemberSchema } from "./teams.schema";
+import { CreateTeamSchema, AddMemberSchema, UpdateMemberRoleSchema, TransferOwnershipSchema } from "./teams.schema";
 
 export const teamsController = new Elysia({ prefix: "/teams" })
   .use(authGuard)
@@ -39,4 +39,51 @@ export const teamsController = new Elysia({ prefix: "/teams" })
           throw new Error("Forbidden");
       }
       return await TeamService.getTeamMembers(id);
+  })
+  .patch("/:id/members/:userId", async ({ params: { id, userId }, body, user, set }) => {
+      const currentUserRole = await TeamService.getMemberRole(user.sub as string, id);
+      if (currentUserRole !== "OWNER" && currentUserRole !== "ADMIN") {
+          set.status = 403;
+          throw new Error("Forbidden");
+      }
+      // TODO: Prevent Admin from changing Owner or other Admin roles?
+      // For now simple check:
+      const targetUserRole = await TeamService.getMemberRole(userId, id);
+      if (targetUserRole === "OWNER") {
+          set.status = 403;
+          throw new Error("Cannot modify team owner");
+      }
+
+      return await TeamService.updateMemberRole(id, userId, body.role);
+  }, {
+      body: UpdateMemberRoleSchema
+  })
+  .delete("/:id/members/:userId", async ({ params: { id, userId }, user, set }) => {
+      const currentUserRole = await TeamService.getMemberRole(user.sub as string, id);
+      if (currentUserRole !== "OWNER" && currentUserRole !== "ADMIN") {
+          set.status = 403;
+          throw new Error("Forbidden");
+      }
+      
+      const targetUserRole = await TeamService.getMemberRole(userId, id);
+      if (targetUserRole === "OWNER") {
+          set.status = 403;
+          throw new Error("Cannot remove team owner");
+      }
+      if (currentUserRole === "ADMIN" && targetUserRole === "ADMIN") {
+          set.status = 403;
+          throw new Error("Admins cannot remove other admins");
+      }
+
+      return await TeamService.removeMember(id, userId);
+  })
+  .post("/:id/transfer", async ({ params: { id }, body, user, set }) => {
+      const currentUserRole = await TeamService.getMemberRole(user.sub as string, id);
+      if (currentUserRole !== "OWNER") {
+          set.status = 403;
+          throw new Error("Only owner can transfer ownership");
+      }
+      return await TeamService.transferOwnership(id, user.sub as string, body.newOwnerId);
+  }, {
+      body: TransferOwnershipSchema
   });

@@ -18,7 +18,7 @@ export default function Layout() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div className="flex min-h-screen bg-gray-200 dark:bg-gray-900 transition-colors duration-200">
       {/* Sidebar */}
       <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hidden md:block transition-colors duration-200">
         <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { api } from "../../api/client";
+import FileUpload from "../../components/upload/FileUpload";
 
 export default function LeaveRequestModal({ isOpen, onClose, initialData, onSuccess }: { isOpen: boolean; onClose: () => void, initialData?: any, onSuccess?: () => void }) {
   const [loading, setLoading] = useState(false);
@@ -10,7 +11,8 @@ export default function LeaveRequestModal({ isOpen, onClose, initialData, onSucc
     startDate: "",
     endDate: "",
     reason: "",
-    teamId: "" 
+    teamId: "",
+    attachments: [] as any[]
   });
 
   useEffect(() => {
@@ -20,7 +22,8 @@ export default function LeaveRequestModal({ isOpen, onClose, initialData, onSucc
             startDate: initialData.startDate instanceof Date ? initialData.startDate.toISOString().split('T')[0] : String(initialData.startDate).split('T')[0],
             endDate: initialData.endDate instanceof Date ? initialData.endDate.toISOString().split('T')[0] : String(initialData.endDate).split('T')[0],
             reason: initialData.reason || "",
-            teamId: initialData.teamId
+            teamId: initialData.teamId,
+            attachments: [] // Todo limits: we don't support editing existing attachments yet
         });
     } else {
         // Reset form if no initial data
@@ -29,7 +32,8 @@ export default function LeaveRequestModal({ isOpen, onClose, initialData, onSucc
             startDate: "",
             endDate: "",
             reason: "",
-            teamId: "" 
+            teamId: "",
+            attachments: []
         });
     }
   }, [initialData, isOpen]);
@@ -153,6 +157,11 @@ export default function LeaveRequestModal({ isOpen, onClose, initialData, onSucc
                             value={formData.reason}
                             onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Attachments</label>
+                        <FileUpload onFilesChange={(files) => setFormData(prev => ({ ...prev, attachments: files }))} />
                     </div>
 
                     <div className="pt-2 flex justify-end space-x-3">

@@ -8,9 +8,9 @@ export function useAuth() {
   useEffect(() => {
     const checkSession = async () => {
         try {
-            const { data, error } = await api.auth.me.get();
+            // Use users.me to get fresh data from DB instead of stale JWT claims
+            const { data, error } = await (api.users as any).me.get();
             if (data && !error) {
-                // Fetch full user details if needed, for now just what's in JWT or /me
                 setUser(data as any); 
             } else {
                 setUser(null);

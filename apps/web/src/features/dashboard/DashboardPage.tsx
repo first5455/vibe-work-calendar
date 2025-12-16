@@ -3,6 +3,7 @@ import CalendarView from "../../components/CalendarView";
 import LeaveRequestModal from "../request/LeaveRequestModal";
 import { Plus } from "lucide-react";
 import { api } from "../../api/client";
+import { ErrorBoundary } from "../../components/ErrorBoundary";
 
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,7 +84,9 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-8">
-          <CalendarView refreshTrigger={refreshTrigger} onEditLeave={handleEditLeave} filter={filter} />
+          <ErrorBoundary>
+              <CalendarView refreshTrigger={refreshTrigger} onEditLeave={handleEditLeave} filter={filter} />
+          </ErrorBoundary>
       </div>
 
       <LeaveRequestModal 

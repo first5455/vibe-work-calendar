@@ -9,25 +9,11 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
   const [currentDate, setCurrentDate] = useState(new Date());
   const [leaves, setLeaves] = useState<any[]>([]);
   const [selectedLeave, setSelectedLeave] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
 // ... existing code ...
 
-                      {/* Edit Button */}
-                      {onEditLeave && (filter.type === 'MINE' || (user && (user.id === selectedLeave.userId || (user as any).sub === selectedLeave.userId))) && (
-                          <div className="pt-4 mt-2 border-t border-gray-100 dark:border-gray-700 flex justify-end">
-                              <button 
-                                onClick={(e) => { 
-                                    e.stopPropagation(); 
-                                    onEditLeave(selectedLeave); 
-                                    setSelectedLeave(null); 
-                                }}
-                                className="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition-colors shadow-sm"
-                              >
-                                  Edit Request
-                              </button>
-                          </div>
-                      )}
 
   useEffect(() => {
     const fetchLeaves = async () => {
@@ -38,23 +24,30 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
                  const { data } = await (api.leaves as any).mine.get();
                  fetchedLeaves = data || [];
              } else if (filter.type === 'TEAM' && filter.teamId) {
-                 const { data } = await (api.leaves as any).team({ teamId: filter.teamId }).get();
+                 console.log("Fetching team leaves for", filter.teamId);
+                 const { data, error } = await (api.leaves as any).team({ teamId: filter.teamId }).get();
+                 if (error) console.error("Team leaves fetch error", error);
+                 console.log("Team leaves data", data);
                  fetchedLeaves = data || [];
              }
 
              if (fetchedLeaves) {
+                 console.log(`Fetched ${fetchedLeaves.length} leaves`);
                  setLeaves(fetchedLeaves.map((l: any) => ({
                      ...l,
                      startDate: new Date(l.startDate),
                      endDate: new Date(l.endDate),
                      // Ensure user object exists if not provided
                      user: l.user || { displayName: 'Unknown' } 
-                 })));
+                 })).filter((l: any) => !isNaN(l.startDate.getTime()) && !isNaN(l.endDate.getTime())));
              }
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
+    setLoading(true);
     fetchLeaves();
   }, [currentDate, refreshTrigger, filter]);
 
@@ -100,6 +93,9 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
         </div>
       </div>
 
+      {loading && <div className="p-4 text-center text-gray-500">Loading...</div>}
+      {!loading && leaves.length === 0 && <div className="p-4 text-center text-gray-500">No leaves found for this selection.</div>}
+
       <div className="grid grid-cols-7 border-b border-gray-100 dark:border-gray-700">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(dayName => (
             <div key={dayName} className="p-4 text-sm font-semibold text-gray-500 dark:text-gray-400">
@@ -139,9 +135,9 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
                                     leave.type === 'VACATION' ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : 
                                     "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
                                 )}
-                                title={`${leave.user.displayName} - ${leave.type}: ${leave.reason}`}
+                                title={`${leave.user?.displayName || 'Unknown'} - ${leave.type}: ${leave.reason}`}
                             >
-                               {leave.user.displayName}
+                               {leave.user?.displayName || 'Unknown'}
                             </div>
                         ))}
                 </div>
@@ -161,8 +157,12 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
                       <div>
                           <span className="text-gray-500 dark:text-gray-400 block mb-1">Team Member</span>
                           <div className="flex items-center">
-                              <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold mr-2">
-                                  {selectedLeave.user.displayName.charAt(0)}
+                              <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold mr-2 overflow-hidden">
+                                  {selectedLeave.user.avatarUrl ? (
+                                      <img src={selectedLeave.user.avatarUrl} alt={selectedLeave.user.displayName} className="w-full h-full object-cover" />
+                                  ) : (
+                                      selectedLeave.user.displayName.charAt(0)
+                                  )}
                               </div>
                               <span className="text-gray-900 dark:text-white font-medium">{selectedLeave.user.displayName}</span>
                           </div>

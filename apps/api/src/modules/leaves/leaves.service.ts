@@ -1,57 +1,86 @@
 import { db } from "../../db";
-import { leaves, teamMembers, users } from "../../db/schema";
+import { leaves, teamMembers, users, attachments } from "../../db/schema";
 import { eq, and, sql, gt, lte, gte, inArray } from "drizzle-orm";
 
 export const LeaveService = {
-  async createLeaveRequest(userId: string, data: { teamId: string, type: "SICK" | "VACATION" | "PERSONAL", startDate: string, endDate: string, reason?: string }) {
+  async createLeaveRequest(userId: string, data: { 
+      teamId: string, 
+      type: "SICK" | "VACATION" | "PERSONAL", 
+      startDate: string, 
+      endDate: string, 
+      reason?: string,
+      attachments?: { fileKey: string, originalName: string, mimeType: string, fileUrl: string }[] 
+  }) {
     const [leave] = await db.insert(leaves).values({
-      ...data,
+      teamId: data.teamId,
+      type: data.type,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      reason: data.reason,
       userId,
     }).returning();
+
+    if (data.attachments && data.attachments.length > 0) {
+        await db.insert(attachments).values(
+            data.attachments.map(att => ({
+                leaveRequestId: leave.id,
+                fileKey: att.fileKey,
+                originalName: att.originalName,
+                mimeType: att.mimeType
+            }))
+        );
+    }
+    
     return leave;
   },
 
-  async getTeamLeaves(teamId: string) {
-    const results = await db.select({
-        leave: leaves,
-        user: {
-            displayName: users.displayName
-        }
-    })
-    .from(leaves)
-    .innerJoin(users, eq(leaves.userId, users.id))
-    .where(eq(leaves.teamId, teamId));
 
-    return results.map(({ leave, user }) => ({
+  async getTeamLeaves(teamId: string) {
+    const results = await db.query.leaves.findMany({
+        where: eq(leaves.teamId, teamId),
+        with: {
+            user: {
+                columns: {
+                    displayName: true,
+                    avatarUrl: true
+                }
+            },
+            attachments: true
+        }
+    });
+
+    return (results as any[]).map(leave => ({
         ...leave,
-        user
+        attachments: leave.attachments ? leave.attachments.map((att: any) => ({
+            ...att,
+            fileUrl: `${process.env.MINIO_ENDPOINT || 'http://localhost:9000'}/${process.env.MINIO_BUCKET || 'vibe-uploads'}/${att.fileKey}`
+        })) : []
     }));
   },
 
   async getUserLeaves(userId: string) {
-     const results = await db.select({
-        leave: leaves,
-        user: {
-            displayName: users.displayName
+     const results = await db.query.leaves.findMany({
+        where: eq(leaves.userId, userId),
+        with: {
+            user: {
+                columns: {
+                    displayName: true,
+                    avatarUrl: true
+                }
+            },
+            attachments: true
         }
-    })
-    .from(leaves)
-    .innerJoin(users, eq(leaves.userId, users.id))
-    .where(eq(leaves.userId, userId));
+     });
 
-    return results.map(({ leave, user }) => ({
+    return (results as any[]).map(leave => ({
         ...leave,
-        user
+        attachments: leave.attachments ? leave.attachments.map((att: any) => ({
+            ...att,
+            fileUrl: `${process.env.MINIO_ENDPOINT || 'http://localhost:9000'}/${process.env.MINIO_BUCKET || 'vibe-uploads'}/${att.fileKey}`
+        })) : []
     }));
   },
 
-  async updateLeaveStatus(leaveId: string, status: "APPROVED" | "REJECTED") {
-    const [leave] = await db.update(leaves)
-      .set({ status })
-      .where(eq(leaves.id, leaveId))
-      .returning();
-    return leave;
-  },
 
   async updateLeave(id: string, data: { type?: "SICK" | "VACATION" | "PERSONAL", startDate?: string, endDate?: string, reason?: string }) {
       const [leave] = await db.update(leaves)
@@ -101,8 +130,7 @@ export const LeaveService = {
             .where(and(
                 inArray(teamMembers.teamId, teamIds),
                 lte(leaves.startDate, today.toISOString()),
-                gte(leaves.endDate, today.toISOString()),
-                eq(leaves.status, 'APPROVED')
+                gte(leaves.endDate, today.toISOString())
             ));
         teamMembersOnLeave = Number(onLeave.count);
     }

@@ -1,4 +1,5 @@
 import { pgTable, text, timestamp, uuid, boolean, date } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -34,7 +35,6 @@ export const leaves = pgTable("leaves", {
   userId: uuid("user_id").references(() => users.id).notNull(),
   teamId: uuid("team_id").references(() => teams.id).notNull(),
   type: text("type", { enum: ["SICK", "VACATION", "PERSONAL"] }).notNull(),
-  status: text("status", { enum: ["PENDING", "APPROVED", "REJECTED"] }).notNull().default("PENDING"),
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),
   reason: text("reason"),
@@ -50,3 +50,47 @@ export const attachments = pgTable("attachments", {
   mimeType: text("mime_type").notNull(),
   uploadedAt: timestamp("uploaded_at").defaultNow(),
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  memberships: many(teamMembers),
+  leaves: many(leaves),
+}));
+
+export const teamsRelations = relations(teams, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [teams.ownerId],
+    references: [users.id],
+  }),
+  members: many(teamMembers),
+  leaves: many(leaves),
+}));
+
+export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
+  user: one(users, {
+    fields: [teamMembers.userId],
+    references: [users.id],
+  }),
+  team: one(teams, {
+    fields: [teamMembers.teamId],
+    references: [teams.id],
+  }),
+}));
+
+export const leavesRelations = relations(leaves, ({ one, many }) => ({
+  user: one(users, {
+    fields: [leaves.userId],
+    references: [users.id],
+  }),
+  team: one(teams, {
+    fields: [leaves.teamId],
+    references: [teams.id],
+  }),
+  attachments: many(attachments),
+}));
+
+export const attachmentsRelations = relations(attachments, ({ one }) => ({
+  leave: one(leaves, {
+    fields: [attachments.leaveRequestId],
+    references: [leaves.id],
+  }),
+}));

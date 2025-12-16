@@ -75,6 +75,13 @@ export const TeamService = {
       return !!member;
   },
 
+  async getMemberRole(userId: string, teamId: string) {
+      const [member] = await db.select({ role: teamMembers.role })
+        .from(teamMembers)
+        .where(and(eq(teamMembers.userId, userId), eq(teamMembers.teamId, teamId)));
+      return member?.role;
+  },
+
   async getTeamMembers(teamId: string) {
       return await db.select({
           id: users.id,
@@ -87,5 +94,46 @@ export const TeamService = {
       .from(teamMembers)
       .innerJoin(users, eq(teamMembers.userId, users.id))
       .where(eq(teamMembers.teamId, teamId));
+  },
+
+  async updateMemberRole(teamId: string, userId: string, role: "ADMIN" | "MEMBER") {
+      const [member] = await db
+        .update(teamMembers)
+        .set({ role })
+        .where(and(eq(teamMembers.teamId, teamId), eq(teamMembers.userId, userId)))
+        .returning();
+      return member;
+  },
+
+  async removeMember(teamId: string, userId: string) {
+      await db
+        .delete(teamMembers)
+        .where(and(eq(teamMembers.teamId, teamId), eq(teamMembers.userId, userId)));
+      return { success: true };
+  },
+
+  async transferOwnership(teamId: string, currentOwnerId: string, newOwnerId: string) {
+      return await db.transaction(async (tx) => {
+          // 1. Update current owner to ADMIN
+          await tx
+            .update(teamMembers)
+            .set({ role: "ADMIN" })
+            .where(and(eq(teamMembers.teamId, teamId), eq(teamMembers.userId, currentOwnerId)));
+
+          // 2. Update new owner to OWNER
+          await tx
+            .update(teamMembers)
+            .set({ role: "OWNER" })
+            .where(and(eq(teamMembers.teamId, teamId), eq(teamMembers.userId, newOwnerId)));
+
+          // 3. Update team ownerId
+          const [team] = await tx
+              .update(teams)
+              .set({ ownerId: newOwnerId })
+              .where(eq(teams.id, teamId))
+              .returning();
+              
+          return team;
+      });
   }
 };

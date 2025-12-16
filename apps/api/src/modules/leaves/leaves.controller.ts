@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
 import { authGuard } from "../../middlewares/auth";
 import { LeaveService } from "./leaves.service";
-import { CreateLeaveSchema, UpdateLeaveStatusSchema, UpdateLeaveSchema } from "./leaves.schema";
+import { CreateLeaveSchema, UpdateLeaveSchema } from "./leaves.schema";
 import { TeamService } from "../teams/teams.service";
 
 export const leavesController = new Elysia({ prefix: "/leaves" })
@@ -32,24 +32,6 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
           throw new Error("Forbidden");
        }
        return await LeaveService.getTeamLeaves(teamId);
-  })
-  .patch("/:id/status", async ({ params: { id }, body, user, set }) => {
-      const leave = await LeaveService.getLeaveById(id);
-      if (!leave) {
-          set.status = 404;
-          throw new Error("Leave request not found");
-      }
-
-      // Check if user is authorized (Admin/Owner of the team)
-      const canApprove = await LeaveService.canApprove(user.sub as string, leave.teamId);
-      if (!canApprove) {
-          set.status = 403;
-          throw new Error("Forbidden: You are not authorized to manage leaves for this team");
-      }
-      
-      return await LeaveService.updateLeaveStatus(id, body.status as "APPROVED" | "REJECTED");
-  }, {
-      body: UpdateLeaveStatusSchema
   })
   .patch("/:id", async ({ params: { id }, body, user, set }) => {
       const leave = await LeaveService.getLeaveById(id);
