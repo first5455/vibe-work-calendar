@@ -17,6 +17,7 @@ const EnvSchema = Type.Object({
   MINIO_ROOT_USER: Type.String(),
   MINIO_ROOT_PASSWORD: Type.String(),
   MINIO_BUCKET: Type.String(),
+  API_URL: Type.String(),
 });
 
 const env = process.env;

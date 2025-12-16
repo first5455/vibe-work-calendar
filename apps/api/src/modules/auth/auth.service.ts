@@ -16,12 +16,12 @@ export const AuthService = {
 
     getGoogleAuthUrl() {
         // Placeholder for Google OAuth URL generation
-        return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${config.GOOGLE_CLIENT_ID}&redirect_uri=http://localhost:3000/auth/callback/google&response_type=code&scope=email%20profile`;
+        return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${config.GOOGLE_CLIENT_ID}&redirect_uri=${config.API_URL}/auth/callback/google&response_type=code&scope=email%20profile`;
     },
     
     getGithubAuthUrl() {
          // Placeholder for Github OAuth URL generation
-         return `https://github.com/login/oauth/authorize?client_id=${config.GITHUB_CLIENT_ID}&redirect_uri=http://localhost:3000/auth/callback/github&scope=user:email`;
+         return `https://github.com/login/oauth/authorize?client_id=${config.GITHUB_CLIENT_ID}&redirect_uri=${config.API_URL}/auth/callback/github&scope=user:email`;
     },
     
     async exchangeGoogleCode(code: string) {
@@ -32,7 +32,7 @@ export const AuthService = {
                 code,
                 client_id: config.GOOGLE_CLIENT_ID!,
                 client_secret: config.GOOGLE_CLIENT_SECRET!,
-                redirect_uri: "http://localhost:3000/auth/callback/google",
+                redirect_uri: `${config.API_URL}/auth/callback/google`,
                 grant_type: "authorization_code",
             }),
         });
@@ -58,7 +58,7 @@ export const AuthService = {
                 client_id: config.GITHUB_CLIENT_ID,
                 client_secret: config.GITHUB_CLIENT_SECRET,
                 code,
-                redirect_uri: "http://localhost:3000/auth/callback/github"
+                redirect_uri: `${config.API_URL}/auth/callback/github`
             }),
         });
         const tokens: any = await tokenResponse.json();
