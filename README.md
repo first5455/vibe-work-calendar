@@ -1,1 +1,1 @@
-# vibe-work-calender
+# vibe-work-calendar

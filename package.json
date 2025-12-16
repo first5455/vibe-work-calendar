@@ -1,0 +1,15 @@
+{
+  "name": "vibe-work-calendar",
+  "version": "0.0.1",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "bun run --filter api dev",
+    "dev:web": "bun run --filter web dev",
+    "dev": "bun run --parallel dev:api dev:web"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}
