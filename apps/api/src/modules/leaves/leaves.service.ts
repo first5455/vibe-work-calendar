@@ -54,7 +54,7 @@ export const LeaveService = {
         ...leave,
         attachments: leave.attachments ? leave.attachments.map((att: any) => ({
             ...att,
-            fileUrl: `${process.env.MINIO_ENDPOINT || 'http://localhost:9000'}/${process.env.MINIO_BUCKET || 'vibe-uploads'}/${att.fileKey}`
+            fileUrl: `${config.MINIO_ENDPOINT}/${config.MINIO_BUCKET}/${att.fileKey}`
         })) : []
     }));
   },
@@ -77,7 +77,7 @@ export const LeaveService = {
         ...leave,
         attachments: leave.attachments ? leave.attachments.map((att: any) => ({
             ...att,
-            fileUrl: `${process.env.MINIO_ENDPOINT || 'http://localhost:9000'}/${process.env.MINIO_BUCKET || 'vibe-uploads'}/${att.fileKey}`
+            fileUrl: `${config.MINIO_ENDPOINT}/${config.MINIO_BUCKET}/${att.fileKey}`
         })) : []
     }));
   },
