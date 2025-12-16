@@ -18,6 +18,7 @@ export default function TeamView() {
                 setTeams(data.map((t: any) => ({
                     id: t.id,
                     name: t.name,
+                    logoUrl: t.logoUrl,
                     role: t.role,
                     memberCount: t.memberCount,
                     members: t.members
@@ -69,8 +70,12 @@ export default function TeamView() {
           <div key={team.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow p-6 group">
              <div className="flex items-start justify-between">
                  <div className="flex items-center space-x-3">
-                     <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold text-lg">
-                         {team.name.charAt(0)}
+                     <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold text-lg overflow-hidden">
+                         {team.logoUrl ? (
+                             <img src={team.logoUrl} alt={team.name} className="w-full h-full object-cover" />
+                         ) : (
+                             team.name.charAt(0)
+                         )}
                      </div>
                      <div>
                          <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{team.name}</h3>

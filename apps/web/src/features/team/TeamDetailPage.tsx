@@ -37,7 +37,6 @@ export default function TeamDetailPage() {
         (api.teams as any)({ id: teamId }).members.get().then(({ data, error }: any) => {
             if (error) console.error("Failed to fetch members", error);
             if (data) {
-                console.log("Fetched members:", data);
                 setMembers(data);
             }
         });

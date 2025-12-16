@@ -22,7 +22,8 @@ export default function Layout() {
       {/* Sidebar */}
       <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hidden md:block transition-colors duration-200">
         <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
-          <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">VibeCal</span>
+          <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">VCalendar</span>
+          <span className="ml-2 text-xs text-gray-400 dark:text-gray-500 font-mono">v{__APP_VERSION__}</span>
         </div>
         <nav className="p-4 space-y-1">
           <NavLink to="/dashboard" icon={<Calendar className="w-5 h-5" />} label="Calendar" />

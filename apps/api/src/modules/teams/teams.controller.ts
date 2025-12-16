@@ -11,7 +11,6 @@ export const teamsController = new Elysia({ prefix: "/teams" })
     body: CreateTeamSchema
   })
   .get("/", async ({ user }: any) => {
-    console.log("Teams Controller /: user object", user);
     if (!user) {
         console.error("Teams Controller /: USER IS UNDEFINED");
         throw new Error("User context missing in teams controller");
@@ -27,7 +26,11 @@ export const teamsController = new Elysia({ prefix: "/teams" })
       return await TeamService.getTeamById(id);
   })
   .post("/:id/members", async ({ params: { id }, body, user, set }) => {
-      // TODO: Check if user is OWNER or ADMIN
+      const role = await TeamService.getMemberRole(user.sub as string, id);
+      if (role !== "OWNER" && role !== "ADMIN") {
+          set.status = 403;
+          throw new Error("Only owner or admin can add members");
+      }
       return await TeamService.addMember(id, body.userId, body.role);
   }, {
       body: AddMemberSchema
@@ -56,8 +59,7 @@ export const teamsController = new Elysia({ prefix: "/teams" })
           set.status = 403;
           throw new Error("Forbidden");
       }
-      // TODO: Prevent Admin from changing Owner or other Admin roles?
-      // For now simple check:
+      // Prevent Admin from changing Owner
       const targetUserRole = await TeamService.getMemberRole(userId, id);
       if (targetUserRole === "OWNER") {
           set.status = 403;

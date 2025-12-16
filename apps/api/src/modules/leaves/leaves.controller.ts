@@ -18,7 +18,6 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
       body: CreateLeaveSchema
   })
   .get("/mine", async ({ user }: any) => {
-      console.log("Leaves Controller /mine: user object", user);
       if (!user) throw new Error("User object is undefined in leaves controller");
       return await LeaveService.getUserLeaves(user.sub as string);
   })

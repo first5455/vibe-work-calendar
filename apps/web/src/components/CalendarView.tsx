@@ -24,15 +24,12 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
                  const { data } = await (api.leaves as any).mine.get();
                  fetchedLeaves = data || [];
              } else if (filter.type === 'TEAM' && filter.teamId) {
-                 console.log("Fetching team leaves for", filter.teamId);
                  const { data, error } = await (api.leaves as any).team({ teamId: filter.teamId }).get();
                  if (error) console.error("Team leaves fetch error", error);
-                 console.log("Team leaves data", data);
                  fetchedLeaves = data || [];
              }
 
              if (fetchedLeaves) {
-                 console.log(`Fetched ${fetchedLeaves.length} leaves`);
                  setLeaves(fetchedLeaves.map((l: any) => ({
                      ...l,
                      startDate: new Date(l.startDate),
