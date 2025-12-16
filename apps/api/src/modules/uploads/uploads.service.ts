@@ -30,7 +30,7 @@ export const UploadService = {
 
     // Construct public URL
     // Assuming bucket is public or we want to access via the endpoint directly
-    const endpoint = config.MINIO_ENDPOINT;
+    const endpoint = config.MINIO_PUBLIC_URL;
     const url = `${endpoint}/${BUCKET_NAME}/${key}`;
 
     return {
