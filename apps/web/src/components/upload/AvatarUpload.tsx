@@ -94,7 +94,8 @@ export default function AvatarUpload({
             formData.append("file", croppedBlob, "avatar.jpg");
             formData.append("folder", "avatars");
 
-            const response = await fetch("http://localhost:3000/uploads", {
+            const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+            const response = await fetch(`${API_URL}/uploads`, {
                 method: "POST",
                 body: formData
             });

@@ -1,14 +1,15 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, HeadBucketCommand, CreateBucketCommand, PutBucketPolicyCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "node:crypto";
+import { config } from "../../config/env";
 
-const BUCKET_NAME = process.env.MINIO_BUCKET || "vibe-uploads";
+const BUCKET_NAME = config.MINIO_BUCKET;
 
 const s3Client = new S3Client({
-    region: process.env.MINIO_REGION || "us-east-1",
-    endpoint: process.env.MINIO_ENDPOINT || "http://localhost:9000",
+    region: "us-east-1", // MinIO default
+    endpoint: config.MINIO_ENDPOINT,
     credentials: {
-        accessKeyId: process.env.MINIO_ROOT_USER || "minioadmin",
-        secretAccessKey: process.env.MINIO_ROOT_PASSWORD || "minioadmin"
+        accessKeyId: config.MINIO_ROOT_USER,
+        secretAccessKey: config.MINIO_ROOT_PASSWORD
     },
     forcePathStyle: true // Needed for MinIO
 });
@@ -29,7 +30,7 @@ export const UploadService = {
 
     // Construct public URL
     // Assuming bucket is public or we want to access via the endpoint directly
-    const endpoint = process.env.MINIO_ENDPOINT || "http://localhost:9000";
+    const endpoint = config.MINIO_ENDPOINT;
     const url = `${endpoint}/${BUCKET_NAME}/${key}`;
 
     return {

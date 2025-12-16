@@ -4,7 +4,8 @@ import { Github } from "lucide-react";
 export default function LoginPage() {
   const handleLogin = (provider: "google" | "github") => {
     // OAuth requires top-level navigation, not fetch/AJAX
-    window.location.href = `http://localhost:3000/auth/login/${provider}`;
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    window.location.href = `${API_URL}/auth/login/${provider}`;
   };
 
   return (

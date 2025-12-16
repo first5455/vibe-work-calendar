@@ -1,6 +1,7 @@
 import { db } from "../../db";
 import { leaves, teamMembers, attachments } from "../../db/schema";
 import { eq, and, sql, gt, lte, gte, inArray } from "drizzle-orm";
+import { config } from "../../config/env";
 
 export const LeaveService = {
   async createLeaveRequest(userId: string, data: { 
