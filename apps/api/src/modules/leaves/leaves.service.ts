@@ -1,5 +1,5 @@
 import { db } from "../../db";
-import { leaves, teamMembers, users, attachments } from "../../db/schema";
+import { leaves, teamMembers, attachments } from "../../db/schema";
 import { eq, and, sql, gt, lte, gte, inArray } from "drizzle-orm";
 
 export const LeaveService = {

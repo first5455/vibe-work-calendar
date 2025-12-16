@@ -1,4 +1,4 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { authGuard } from "../../middlewares/auth";
 import { TeamService } from "./teams.service";
 import { CreateTeamSchema, AddMemberSchema, UpdateMemberRoleSchema, TransferOwnershipSchema, UpdateTeamSchema } from "./teams.schema";

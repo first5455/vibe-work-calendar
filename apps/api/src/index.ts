@@ -7,7 +7,6 @@ import { leavesController } from "./modules/leaves/leaves.controller";
 import { usersController } from "./modules/users/users.controller";
 import { uploadsController } from "./modules/uploads/uploads.controller";
 import { UploadService } from "./modules/uploads/uploads.service";
-import { staticPlugin } from "@elysiajs/static";
 
 const app = new Elysia()
   .use(cors())

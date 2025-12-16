@@ -3,14 +3,6 @@ import { X, Search, UserPlus } from "lucide-react";
 import { api } from "../../api/client";
 
 export default function AddMemberModal({ isOpen, onClose, teamId, onSuccess }: { isOpen: boolean; onClose: () => void, teamId: string, onSuccess?: () => void }) {
-// ...
-    try {
-        const { error: reqError } = await (api.teams as any)({ id: teamId }).members.post({
-            userId: selectedUser.id,
-            role
-        });
-        
-        if (reqError) throw reqError;
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -33,7 +25,7 @@ export default function AddMemberModal({ isOpen, onClose, teamId, onSuccess }: {
           if (searchQuery.length >= 2) {
               setSearching(true);
               try {
-                  const { data, error } = await (api.users as any).search.get({ query: { q: searchQuery } });
+                  const { data } = await (api.users as any).search.get({ query: { q: searchQuery } });
                   if (data) {
                       setSearchResults(data);
                   }

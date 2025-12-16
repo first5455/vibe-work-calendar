@@ -38,7 +38,7 @@ export const authController = new Elysia({ prefix: "/auth" })
       auth.remove();
       return { success: true };
   })
-  .get("/callback/:provider", async ({ params: { provider }, query: { code }, jwt, cookie: { auth }, set }) => {
+  .get("/callback/:provider", async ({ params: { provider }, query: { code }, jwt, cookie: { auth } }) => {
       if (!code) {
           return new Response("No code provided", { status: 400 });
       }
