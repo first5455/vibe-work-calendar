@@ -26,8 +26,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}         # Comes from GitHub Secret
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} # Comes from GitHub Secret
+      - MINIO_ROOT_USER: ${MINIO_ROOT_USER}         # Comes from GitHub Secret
+      - MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} # Comes from GitHub Secret
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
@@ -57,11 +57,11 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-      # --- ADD THIS ARGS BLOCK ---
+
       args:
         VITE_API_URL: ${VITE_API_URL}
         VITE_PORT: ${VITE_PORT}
-      # ---------------------------
+
     container_name: vibe-calendar-web
     restart: always
     ports:
