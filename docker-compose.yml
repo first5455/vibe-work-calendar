@@ -85,20 +85,18 @@ services:
       - postgres
 
   minio-backup:
-    image: offen/docker-volume-backup:latest
+    image: alpine:latest
     restart: always
-    environment:
-      # Schedule: Run every day at 04:00 AM
-      - BACKUP_CRON_EXPRESSION=0 4 * * *
-      # Keep last 7 days
-      - BACKUP_RETENTION_DAYS=7
-      # Name of the backup file
-      - BACKUP_FILENAME=minio-backup-%Y-%m-%dT%H-%M-%S.tar.gz
     volumes:
-      # 1. The Data to Backup (Read Only)
       - minio_data:/backup/source:ro
-      # 2. Where to save the zipped backup
-      -  /home/first545455/infra/backups/calendar/minio:/backup/archive
+      - /home/first545455/infra/backups/calendar/minio:/backup/archive
+    command: >
+      sh -c "while true; do
+      echo 'Starting MinIO backup...';
+      tar -czf /backup/archive/minio-backup.tar.gz -C /backup/source .;
+      echo 'Success! Sleeping for 24h...';
+      sleep 86400;
+      done"
 
 volumes:
   postgres_data:
