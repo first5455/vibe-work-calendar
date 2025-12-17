@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.1 (2025-12-17)
+
+### Experimental Features
+
+- **Progressive Web App (Beta)**: Added initial PWA support. Users can now install VCalendar on their devices. Please note that this feature is currently in **Beta** and offline functionality may be limited.
+
 ## 1.3.0 (2025-12-17)
 
 ### New Features
