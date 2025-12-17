@@ -30,7 +30,7 @@ export default function Layout() {
       `}>
         <div className="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700 justify-between">
             <div className="flex items-center">
-                <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">VCalendar</span>
+                <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">OffDays</span>
                 <span className="ml-2 text-xs text-gray-400 dark:text-gray-500 font-mono">v{__APP_VERSION__}</span>
             </div>
             {/* Mobile close button */}
@@ -91,7 +91,7 @@ export default function Layout() {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">VCalendar</span>
+          <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">OffDays</span>
           <div className="w-8" /> {/* Spacer for centering if needed, or user avatar later */}
         </header>
         
