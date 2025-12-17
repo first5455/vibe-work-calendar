@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.8 (2025-12-18)
+
+### Dashboard improvements
+
+- **New Statistic**: Added "Total Leaves of this month" card to the dashboard to track monthly leave usage.
+- **UI Clarification**: Renamed "Upcoming Leaves" to "Upcoming My Leaves" to strictly indicate personal upcoming leaves.
+
+### Branding
+
+- **UI Text**: Updated all remaining "VCalendar" text references in Login and Layout components to "OffDays".
+
 ## 1.3.7 (2025-12-18)
 
 ### Branding

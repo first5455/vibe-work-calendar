@@ -192,6 +192,8 @@ export const LeaveService = {
 
   async getStats(userId: string) {
     const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     
     // Count upcoming leaves for user
     const [upcoming] = await db.select({ count: sql<number>`count(*)` })
@@ -199,6 +201,15 @@ export const LeaveService = {
         .where(and(
             eq(leaves.userId, userId),
             gt(leaves.startDate, today.toISOString())
+        ));
+
+    // Count monthly leaves for user
+    const [monthly] = await db.select({ count: sql<number>`count(*)` })
+        .from(leaves)
+        .where(and(
+            eq(leaves.userId, userId),
+            gte(leaves.startDate, startOfMonth.toISOString()),
+            lte(leaves.startDate, endOfMonth.toISOString())
         ));
 
     // Get user's teams
@@ -225,7 +236,8 @@ export const LeaveService = {
 
     return {
         upcomingLeaves: Number(upcoming.count),
-        teamMembersOnLeave
+        teamMembersOnLeave,
+        totalLeavesThisMonth: Number(monthly.count)
     };
   },
 

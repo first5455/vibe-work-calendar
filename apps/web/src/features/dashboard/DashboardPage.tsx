@@ -12,7 +12,7 @@ export default function DashboardPage() {
     const { user } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { lastMessage } = useWebSocket();
-    const [stats, setStats] = useState({ upcomingLeaves: 0, teamMembersOnLeave: 0 });
+    const [stats, setStats] = useState({ upcomingLeaves: 0, teamMembersOnLeave: 0, totalLeavesThisMonth: 0 });
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [editLeave, setEditLeave] = useState<any>(null);
     const [teams, setTeams] = useState<any[]>([]);
@@ -84,8 +84,12 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-transparent dark:border-gray-700">
-             <h3 className="font-medium text-gray-500 dark:text-gray-400">Upcoming Leaves</h3>
+             <h3 className="font-medium text-gray-500 dark:text-gray-400">Upcoming My Leaves</h3>
              <p className="text-3xl font-bold mt-2 text-gray-900 dark:text-white">{stats.upcomingLeaves}</p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-transparent dark:border-gray-700">
+             <h3 className="font-medium text-gray-500 dark:text-gray-400">Total Leaves of this month</h3>
+             <p className="text-3xl font-bold mt-2 text-gray-900 dark:text-white">{(stats as any).totalLeavesThisMonth || 0}</p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-transparent dark:border-gray-700">
              <h3 className="font-medium text-gray-500 dark:text-gray-400">Team Members On Leave</h3>
