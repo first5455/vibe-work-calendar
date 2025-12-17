@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.6 (2025-12-17)
+
+### New Features
+
+- **Date Validation**: Added smart date validation to the Leave Request modal.
+  - Selecting a Start Date after the End Date automatically updates the End Date.
+  - Selecting an End Date before the Start Date automatically updates the Start Date.
+
 ## 1.3.5 (2025-12-17)
 
 ### Improvements
