@@ -7,6 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 
 export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter = { type: 'MINE' } }: { refreshTrigger?: number, onEditLeave?: (leave: any) => void, filter?: { type: 'MINE' | 'TEAM', teamId?: string } }) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date()); // For mobile agenda view
   const [leaves, setLeaves] = useState<any[]>([]);
   const [selectedLeave, setSelectedLeave] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -69,8 +70,8 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-      <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
+      <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row items-center justify-between gap-4">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
         </h2>
@@ -93,53 +94,125 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
       {loading && <div className="p-4 text-center text-gray-500">Loading...</div>}
       {!loading && leaves.length === 0 && <div className="p-4 text-center text-gray-500">No leaves found for this selection.</div>}
 
-      <div className="grid grid-cols-7 border-b border-gray-100 dark:border-gray-700">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(dayName => (
-            <div key={dayName} className="p-4 text-sm font-semibold text-gray-500 dark:text-gray-400">
-                {dayName}
+      <div className="overflow-x-auto">
+        <div className="min-w-full md:min-w-[800px]">
+            <div className="grid grid-cols-7 border-b border-gray-100 dark:border-gray-700">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(dayName => (
+                    <div key={dayName} className="p-4 text-sm font-semibold text-gray-500 dark:text-gray-400 text-center md:text-left">
+                        {dayName.slice(0, 3)}
+                    </div>
+                ))}
             </div>
-        ))}
+
+            <div className="grid grid-cols-7 auto-rows-[80px] md:auto-rows-[120px]">
+                {allDaysInMonthView.map((dayItem, i) => {
+                    const isSelected = isSameMonth(dayItem, currentDate) && dayItem.getDate() === selectedDate.getDate() && dayItem.getMonth() === selectedDate.getMonth();
+                    const dayLeaves = leaves.filter(leave => isWithinInterval(dayItem, { start: startOfDay(leave.startDate), end: endOfDay(leave.endDate) }));
+                    
+                    return (
+                    <div 
+                        key={i} 
+                        onClick={() => setSelectedDate(dayItem)}
+                        className={cn(
+                            "p-2 border-b border-r border-gray-100 dark:border-gray-700 relative transition-colors cursor-pointer md:cursor-default",
+                            !isSameMonth(dayItem, currentDate) && "bg-gray-50/50 dark:bg-gray-900/50",
+                            isSelected && "bg-indigo-50 dark:bg-indigo-900/20 md:bg-transparent md:dark:bg-transparent" // Highlight selected day on mobile
+                        )}
+                    >
+                        <div className="flex flex-col items-center md:items-start h-full">
+                            <div className={cn(
+                                "text-sm mb-1 font-medium w-7 h-7 flex items-center justify-center rounded-full",
+                                isSameMonth(dayItem, new Date()) && dayItem.getDate() === new Date().getDate() && dayItem.getMonth() === new Date().getMonth() && dayItem.getFullYear() === new Date().getFullYear()
+                                    ? "bg-indigo-600 text-white" 
+                                    : "text-gray-700 dark:text-gray-300"
+                            )}>
+                                {dayItem.getDate()}
+                            </div>
+
+                            {/* Mobile Dots View */}
+                            <div className="flex md:hidden space-x-1 mt-1 flex-wrap justify-center">
+                                {dayLeaves.slice(0, 5).map((leave, idx) => (
+                                    <div 
+                                        key={`dot-${leave.id}-${idx}`}
+                                        className={cn(
+                                            "w-1.5 h-1.5 rounded-full",
+                                            leave.type === 'SICK' ? "bg-red-500" :
+                                            leave.type === 'VACATION' ? "bg-green-500" : 
+                                            "bg-blue-500"
+                                        )}
+                                    />
+                                ))}
+                                {dayLeaves.length > 5 && <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />}
+                            </div>
+                            
+                            {/* Desktop List View */}
+                            <div className="hidden md:block w-full space-y-1 overflow-y-auto max-h-[80px] hide-scrollbar">
+                                {dayLeaves.map((leave, idx) => (
+                                    <div 
+                                        key={`${leave.id}-${idx}`}
+                                        onClick={(e) => { e.stopPropagation(); setSelectedLeave(leave); }}
+                                        className={cn(
+                                            "text-xs p-1 rounded cursor-pointer truncate transition-opacity hover:opacity-80 flex items-center",
+                                            leave.type === 'SICK' ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" :
+                                            leave.type === 'VACATION' ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : 
+                                            "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                                        )}
+                                        title={`${leave.user?.displayName || 'Unknown'} - ${leave.type}: ${leave.reason}`}
+                                    >
+                                    {leave.user?.displayName || 'Unknown'}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )})}
+            </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-7 auto-rows-[120px]">
-        {allDaysInMonthView.map((dayItem, i) => (
-            <div 
-                key={i} 
-                className={cn(
-                    "p-2 border-b border-r border-gray-100 dark:border-gray-700 relative hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors",
-                    !isSameMonth(dayItem, currentDate) && "bg-gray-50/50 dark:bg-gray-900/50"
-                )}
-            >
-                <div className={cn(
-                    "text-sm mb-1 font-medium w-7 h-7 flex items-center justify-center rounded-full",
-                    isSameMonth(dayItem, new Date()) && dayItem.getDate() === new Date().getDate() && dayItem.getMonth() === new Date().getMonth() && dayItem.getFullYear() === new Date().getFullYear()
-                        ? "bg-indigo-600 text-white" 
-                        : "text-gray-700 dark:text-gray-300"
-                )}>
-                    {dayItem.getDate()}
-                </div>
-                
-                <div className="space-y-1 overflow-y-auto max-h-[80px] hide-scrollbar">
-                    {leaves
-                        .filter(leave => isWithinInterval(dayItem, { start: startOfDay(leave.startDate), end: endOfDay(leave.endDate) }))
-                        .map((leave, idx) => (
-                            <div 
-                                key={`${leave.id}-${idx}`}
-                                onClick={(e) => { e.stopPropagation(); setSelectedLeave(leave); }}
-                                className={cn(
-                                    "text-xs p-1 rounded cursor-pointer truncate transition-opacity hover:opacity-80 flex items-center",
-                                    leave.type === 'SICK' ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" :
-                                    leave.type === 'VACATION' ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : 
-                                    "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                )}
-                                title={`${leave.user?.displayName || 'Unknown'} - ${leave.type}: ${leave.reason}`}
-                            >
-                               {leave.user?.displayName || 'Unknown'}
+      {/* Mobile Agenda View */}
+      <div className="block md:hidden border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 p-4">
+        <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
+            Leaves for {format(selectedDate, 'MMM d, yyyy')}
+        </h3>
+        <div className="space-y-2">
+            {leaves.filter(leave => isWithinInterval(selectedDate, { start: startOfDay(leave.startDate), end: endOfDay(leave.endDate) })).length === 0 ? (
+                <p className="text-sm text-gray-400 italic">No leaves for this day.</p>
+            ) : (
+                leaves
+                    .filter(leave => isWithinInterval(selectedDate, { start: startOfDay(leave.startDate), end: endOfDay(leave.endDate) }))
+                    .map((leave, idx) => (
+                        <div 
+                            key={`${leave.id}-${idx}-agenda`}
+                            onClick={() => setSelectedLeave(leave)}
+                            className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-between cursor-pointer active:scale-95 transition-transform"
+                        >
+                            <div className="flex items-center space-x-3">
+                                <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                                     {leave.user?.avatarUrl ? (
+                                        <img src={leave.user.avatarUrl} alt={leave.user.displayName} className="w-full h-full object-cover" />
+                                     ) : (
+                                        <span className="text-xs font-bold text-gray-500">{leave.user?.displayName?.charAt(0)}</span>
+                                     )}
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{leave.user?.displayName}</p>
+                                    <div className="flex items-center space-x-2">
+                                        <span className={cn(
+                                            "text-xs px-1.5 py-0.5 rounded font-medium",
+                                            leave.type === 'SICK' ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" :
+                                            leave.type === 'VACATION' ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : 
+                                            "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                                        )}>
+                                            {leave.type}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                        ))}
-                </div>
-            </div>
-        ))}
+                        </div>
+                    ))
+            )}
+        </div>
       </div>
 
       {/* Leave Detail Modal/Popover */}

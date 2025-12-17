@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Paperclip, X, File } from "lucide-react";
 import { api } from "../../api/client";
+import AlertDialog from "../../components/ui/AlertDialog";
 
 interface UploadedFile {
     fileKey: string;
@@ -13,6 +14,12 @@ export default function FileUpload({ onFilesChange }: { onFilesChange: (files: U
     const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [alertInfo, setAlertInfo] = useState<{ open: boolean, title: string, message: string, type: 'error' | 'success' | 'info' }>({ 
+        open: false, 
+        title: "", 
+        message: "", 
+        type: 'info' 
+    });
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
@@ -32,7 +39,7 @@ export default function FileUpload({ onFilesChange }: { onFilesChange: (files: U
 
                 if (error) {
                     console.error("Upload error", error);
-                    alert(`Failed to upload ${file.name}`);
+                    setAlertInfo({ open: true, title: "Error", message: `Failed to upload ${file.name}`, type: 'error' });
                     continue;
                 }
 
@@ -99,6 +106,13 @@ export default function FileUpload({ onFilesChange }: { onFilesChange: (files: U
                 onChange={handleFileSelect} 
                 className="hidden" 
                 multiple
+            />
+            <AlertDialog 
+                isOpen={alertInfo.open} 
+                onClose={() => setAlertInfo(prev => ({ ...prev, open: false }))}
+                title={alertInfo.title}
+                message={alertInfo.message}
+                type={alertInfo.type}
             />
         </div>
     );

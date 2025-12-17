@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import { Camera, X, Upload, ZoomIn, ZoomOut } from "lucide-react";
 import { api } from "../../api/client";
+import AlertDialog from "../../components/ui/AlertDialog";
 
 // Helper to create the cropped image
 const createCroppedImg = async (imageSrc: string, pixelCrop: any) => {
@@ -61,6 +62,12 @@ export default function AvatarUpload({
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [alertInfo, setAlertInfo] = useState<{ open: boolean, title: string, message: string, type: 'error' | 'success' | 'info' }>({ 
+        open: false, 
+        title: "", 
+        message: "", 
+        type: 'info' 
+    });
 
     const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
         setCroppedAreaPixels(croppedAreaPixels);
@@ -123,7 +130,7 @@ export default function AvatarUpload({
 
         } catch (e) {
             console.error("Upload failed", e);
-            alert("Failed to upload avatar");
+            setAlertInfo({ open: true, title: "Error", message: "Failed to upload avatar", type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -215,6 +222,13 @@ export default function AvatarUpload({
                     </div>
                 </div>
             )}
+            <AlertDialog 
+                isOpen={alertInfo.open} 
+                onClose={() => setAlertInfo(prev => ({ ...prev, open: false }))}
+                title={alertInfo.title}
+                message={alertInfo.message}
+                type={alertInfo.type}
+            />
         </div>
     );
 }

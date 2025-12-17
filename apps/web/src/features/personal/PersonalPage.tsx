@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/client";
 import { Calendar, ArrowRight, Paperclip } from "lucide-react";
 import LeaveRequestModal from "../request/LeaveRequestModal";
+import AlertDialog from "../../components/ui/AlertDialog";
 // import { useAuth } from "../../hooks/useAuth";
 
 export default function PersonalPage() {
@@ -9,6 +10,13 @@ export default function PersonalPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     // const { user } = useAuth(); // Unused
     const [editLeave, setEditLeave] = useState<any>(null);
+
+    const [alertInfo, setAlertInfo] = useState<{ open: boolean, title: string, message: string, type: 'error' | 'success' | 'info', onConfirm?: () => void }>({ 
+        open: false, 
+        title: "", 
+        message: "", 
+        type: 'info' 
+    });
 
     useEffect(() => {
         loadLeaves();
@@ -23,13 +31,14 @@ export default function PersonalPage() {
     };
 
     const handleDelete = async (id: string) => {
+        // Todo: Replace native confirm with custom Dialog later if needed, focusing on alert() for now
         if (!confirm("Are you sure you want to delete this leave request?")) return;
         try {
             await (api.leaves as any)({ id }).delete();
             setLeaves(leaves.filter(l => l.id !== id));
         } catch (e) {
             console.error("Failed to delete", e);
-            alert("Failed to delete");
+            setAlertInfo({ open: true, title: "Error", message: "Failed to delete request", type: 'error' });
         }
     };
 
@@ -40,14 +49,14 @@ export default function PersonalPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Leaves</h1>
                     <p className="text-gray-500 dark:text-gray-400">Manage your personal and team leave requests</p>
                 </div>
                 <button 
                     onClick={() => { setEditLeave(null); setIsModalOpen(true); }}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center shadow-lg shadow-indigo-500/20"
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-indigo-500/20 w-full md:w-auto"
                 >
                     <Calendar className="w-4 h-4 mr-2" />
                     Request Leave
@@ -70,9 +79,9 @@ export default function PersonalPage() {
                 ) : (
                     <div className="divide-y divide-gray-50 dark:divide-gray-700">
                         {leaves.map((leave) => (
-                            <div key={leave.id} className="p-6 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors">
-                                <div className="flex justify-between items-start">
-                                    <div className="flex items-center space-x-4">
+                            <div key={leave.id} className="p-4 md:p-6 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors">
+                                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                                    <div className="flex items-start space-x-4">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
                                             leave.type === 'SICK' ? 'bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400' :
                                             leave.type === 'VACATION' ? 'bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400' : 
@@ -81,7 +90,7 @@ export default function PersonalPage() {
                                             {leave.type === 'SICK' ? '🤒' : leave.type === 'VACATION' ? '🏖️' : '🏠'}
                                         </div>
                                         <div>
-                                            <div className="flex items-center space-x-2">
+                                            <div className="flex flex-wrap items-center gap-2">
                                                 <span className="font-semibold text-gray-900 dark:text-white text-lg">
                                                     {leave.type.charAt(0) + leave.type.slice(1).toLowerCase()}
                                                 </span>
@@ -96,17 +105,17 @@ export default function PersonalPage() {
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="flex items-center mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                                <span>{new Date(leave.startDate).toLocaleDateString()}</span>
+                                            <div className="flex flex-wrap items-center mt-1 text-sm text-gray-500 dark:text-gray-400 gap-y-1">
+                                                <span className="whitespace-nowrap">{new Date(leave.startDate).toLocaleDateString()}</span>
                                                 <ArrowRight className="w-3 h-3 mx-2" />
-                                                <span>{new Date(leave.endDate).toLocaleDateString()}</span>
-                                                <span className="mx-2">•</span>
-                                                <span>{Math.ceil((new Date(leave.endDate).getTime() - new Date(leave.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1} days</span>
+                                                <span className="whitespace-nowrap">{new Date(leave.endDate).toLocaleDateString()}</span>
+                                                <span className="mx-2 hidden md:inline">•</span>
+                                                <span className="w-full md:w-auto mt-1 md:mt-0">{Math.ceil((new Date(leave.endDate).getTime() - new Date(leave.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1} days</span>
                                             </div>
                                         </div>
                                     </div>
                                     
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex items-center space-x-2 w-full md:w-auto justify-end">
                                          <button 
                                             onClick={() => handleEdit(leave)}
                                             className="px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-md transition-colors"
@@ -123,7 +132,7 @@ export default function PersonalPage() {
                                 </div>
 
                                 {(leave.reason || (leave.attachments && leave.attachments.length > 0)) && (
-                                    <div className="mt-4 ml-16 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-100 dark:border-gray-700">
+                                    <div className="mt-4 md:ml-16 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-100 dark:border-gray-700">
                                         {leave.reason && (
                                             <p className="text-gray-700 dark:text-gray-300 italic mb-3">"{leave.reason}"</p>
                                         )}
@@ -156,6 +165,13 @@ export default function PersonalPage() {
                 onClose={() => { setIsModalOpen(false); setEditLeave(null); }} 
                 onSuccess={loadLeaves}
                 initialData={editLeave}
+            />
+            <AlertDialog 
+                isOpen={alertInfo.open} 
+                onClose={() => setAlertInfo(prev => ({ ...prev, open: false }))}
+                title={alertInfo.title}
+                message={alertInfo.message}
+                type={alertInfo.type}
             />
         </div>
     );
