@@ -68,7 +68,6 @@ services:
   db-backup:
     image: prodrigestivill/postgres-backup-local
     restart: always
-    user: postgres:postgres # Run as postgres user to avoid permission issues
     volumes:
       # Where to save the backups on your server
       - ~/infra/backups/calendar/database:/backups
