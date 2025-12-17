@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.7 (2025-12-18)
+
+### Branding
+
+- **Rebranding**: Renamed application from "VCalendar" to "OffDays".
+- **Visual Identity**: Updated PWA icons to a new scalable SVG format with a modern design.
+- **PWA**: Updated manifest and index.html to reflect the new "OffDays" branding.
+
 ## 1.3.6 (2025-12-17)
 
 ### New Features
