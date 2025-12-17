@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.2 (2025-12-17)
+
+### Bug Fixes
+
+- **Branding**: Fixed "VibeCal" text still appearing in the mobile header; updated to "VCalendar" for consistency.
+- **Mobile UI**: Fixed an issue where user avatars were stretched/squashed in the "All Leaves" list on small screens.
+
 ## 1.3.1 (2025-12-17)
 
 ### Experimental Features

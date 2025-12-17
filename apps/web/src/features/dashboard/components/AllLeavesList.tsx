@@ -88,7 +88,7 @@ export default function AllLeavesList({ refreshTrigger = 0, onEditLeave }: AllLe
                                 >
                                     <td className="px-4 py-3">
                                         <div className="flex items-center space-x-3">
-                                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden shrink-0">
                                                 {leave.user?.avatarUrl ? (
                                                     <img src={leave.user.avatarUrl} alt={leave.user.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                                 ) : (
