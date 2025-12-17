@@ -118,7 +118,7 @@ export default function AllLeavesList({ refreshTrigger = 0, onEditLeave }: AllLe
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
-                                        {format(new Date(leave.startDate), 'MMM d, yyyy')} - {format(new Date(leave.endDate), 'MMM d, yyyy')}
+                                        {format(new Date(leave.startDate), 'dd/MM/yyyy')} - {format(new Date(leave.endDate), 'dd/MM/yyyy')}
                                     </td>
                                 </tr>
                                 );

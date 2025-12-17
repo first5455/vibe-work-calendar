@@ -6,7 +6,7 @@ import { UploadService } from "../uploads/uploads.service";
 
 export const LeaveService = {
   async createLeaveRequest(userId: string, data: { 
-      teamId?: string, 
+      teamId?: string | null, 
       type: "SICK" | "VACATION" | "WFH" | "PERSONAL", 
       startDate: string, 
       endDate: string, 
@@ -107,7 +107,7 @@ export const LeaveService = {
   },
 
 
-  async updateLeave(id: string, data: { teamId?: string, type?: "SICK" | "VACATION" | "WFH" | "PERSONAL", startDate?: string, endDate?: string, reason?: string, attachments?: any[] }) {
+  async updateLeave(id: string, data: { teamId?: string | null, type?: "SICK" | "VACATION" | "WFH" | "PERSONAL", startDate?: string, endDate?: string, reason?: string, attachments?: any[] }) {
       await db.transaction(async (tx) => {
           if (data.attachments) {
               // Fetch existing attachments to compare

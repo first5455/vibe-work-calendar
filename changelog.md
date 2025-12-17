@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.5 (2025-12-17)
+
+### Improvements
+
+- **PWA Caching**: Updated Nginx configuration to disable caching for `index.html` and `sw.js`. This ensures users always receive the latest version immediately upon deployment.
+- **Date Formatting**: Changed date display format in the Dashboard list to `dd/MM/yyyy` for better readability.
+
+### Bug Fixes
+
+- **Edit Leave**: Finalized the fix for editing leaves. The system now correctly handles "clearing" a Team ID selection (e.g., switching to Personal Leave) without validation errors.
+
 ## 1.3.4 (2025-12-17)
 
 ### New Features

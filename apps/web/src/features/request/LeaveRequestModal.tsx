@@ -95,8 +95,11 @@ export default function LeaveRequestModal({ isOpen, onClose, onSuccess, initialD
 
             const payload = {
                 ...formData,
-                startDate: new Date(formData.startDate),
-                endDate: new Date(formData.endDate),
+                // Send YYYY-MM-DD strings directly, avoid timezone shifts from new Date().toJSON()
+                startDate: formData.startDate, 
+                endDate: formData.endDate,
+                // Send null if teamId is undefined purely to handle "Clearing" the field if backend supports it
+                teamId: formData.teamId === undefined ? null : formData.teamId,
                 attachments: combinedAttachments
             };
 
