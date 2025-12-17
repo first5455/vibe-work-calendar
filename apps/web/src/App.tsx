@@ -8,27 +8,30 @@ import PersonalPage from './features/personal/PersonalPage';
 import { ThemeProvider } from "./context/ThemeContext";
 import SettingsPage from "./features/settings/SettingsPage";
 import RequireAuth from './components/layout/RequireAuth';
+import { WebSocketProvider } from './context/WebSocketContext';
 
 function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/auth/login" element={<LoginPage />} />
-          <Route element={
-            <RequireAuth>
-              <Layout />
-            </RequireAuth>
-          }>
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="team" element={<TeamView />} />
-            <Route path="team/:teamId" element={<TeamDetailPage />} />
-            <Route path="personal" element={<PersonalPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <WebSocketProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/auth/login" element={<LoginPage />} />
+            <Route element={
+              <RequireAuth>
+                <Layout />
+              </RequireAuth>
+            }>
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="team" element={<TeamView />} />
+              <Route path="team/:teamId" element={<TeamDetailPage />} />
+              <Route path="personal" element={<PersonalPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </WebSocketProvider>
     </ThemeProvider>
   );
 }

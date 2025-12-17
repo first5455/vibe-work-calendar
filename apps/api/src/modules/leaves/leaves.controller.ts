@@ -4,6 +4,8 @@ import { LeaveService } from "./leaves.service";
 import { CreateLeaveSchema, UpdateLeaveSchema } from "./leaves.schema";
 import { TeamService } from "../teams/teams.service";
 
+import { WebSocketService } from "../../services/ws.service";
+
 export const leavesController = new Elysia({ prefix: "/leaves" })
   .use(authGuard)
   .post("/", async ({ body, user, set }) => {
@@ -15,7 +17,9 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
               throw new Error("You must be a member of the team to request leave.");
           }
       }
-      return await LeaveService.createLeaveRequest(user.sub as string, body as any);
+      const leave = await LeaveService.createLeaveRequest(user.sub as string, body as any);
+      WebSocketService.broadcast("LEAVE_CREATED", leave);
+      return leave;
   }, {
       body: CreateLeaveSchema
   })
@@ -25,6 +29,9 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
   })
   .get("/stats", async ({ user }: any) => {
       return await LeaveService.getStats(user.sub as string);
+  })
+  .get("/all", async () => {
+      return await LeaveService.getAllLeaves();
   })
   .get("/team/:teamId", async ({ params: { teamId }, user, set }) => {
        const isMember = await TeamService.isMember(user.sub as string, teamId);
@@ -52,7 +59,9 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
           throw new Error("Forbidden");
       }
 
-      return await LeaveService.updateLeave(id, body);
+      const updated = await LeaveService.updateLeave(id, body);
+      WebSocketService.broadcast("LEAVE_UPDATED", updated);
+      return updated;
   }, {
       body: UpdateLeaveSchema
   })
@@ -74,5 +83,7 @@ export const leavesController = new Elysia({ prefix: "/leaves" })
           throw new Error("Forbidden");
       }
 
-      return await LeaveService.deleteLeave(id);
+      const deleted = await LeaveService.deleteLeave(id);
+      WebSocketService.broadcast("LEAVE_DELETED", { id });
+      return deleted;
   });

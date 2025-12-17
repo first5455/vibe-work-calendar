@@ -145,6 +145,7 @@ export default function AvatarUpload({
                             src={currentAvatarUrl} 
                             alt="Avatar" 
                             className="w-full h-full object-cover" 
+                            referrerPolicy="no-referrer"
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">

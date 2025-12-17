@@ -59,6 +59,29 @@ export const LeaveService = {
     }));
   },
 
+  async getAllLeaves() {
+    const results = await db.query.leaves.findMany({
+        orderBy: (leaves, { desc }) => [desc(leaves.startDate)],
+        with: {
+            user: {
+                columns: {
+                    displayName: true,
+                    avatarUrl: true
+                }
+            },
+            attachments: true
+        }
+    });
+
+    return (results as any[]).map(leave => ({
+        ...leave,
+        attachments: leave.attachments ? leave.attachments.map((att: any) => ({
+            ...att,
+            fileUrl: `${config.MINIO_ENDPOINT}/${config.MINIO_BUCKET}/${att.fileKey}`
+        })) : []
+    }));
+  },
+
   async getUserLeaves(userId: string) {
      const results = await db.query.leaves.findMany({
         where: eq(leaves.userId, userId),

@@ -101,7 +101,7 @@ export default function TeamView() {
                  <div className="flex items-center space-x-3">
                      <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold text-lg overflow-hidden">
                          {team.logoUrl ? (
-                             <img src={team.logoUrl} alt={team.name} className="w-full h-full object-cover" />
+                             <img src={team.logoUrl} alt={team.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                          ) : (
                              team.name.charAt(0)
                          )}
@@ -119,7 +119,7 @@ export default function TeamView() {
                      {team.members && team.members.map((member: any) => (
                          <div key={member.id} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 overflow-hidden" title={member.displayName}>
                              {member.avatarUrl ? (
-                                 <img src={member.avatarUrl} alt={member.displayName} className="w-full h-full object-cover" />
+                                 <img src={member.avatarUrl} alt={member.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                              ) : (
                                  <span className="font-medium text-gray-600 dark:text-gray-300">{member.displayName.charAt(0).toUpperCase()}</span>
                              )}

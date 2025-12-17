@@ -182,7 +182,7 @@ export default function TeamDetailPage() {
                                 <div className="flex items-center space-x-3">
                                     <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 overflow-hidden">
                                     {member.avatarUrl ? (
-                                        <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover" />
+                                        <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                     ) : (
                                         <span className="font-medium">{member.name.charAt(0)}</span>
                                     )}
@@ -270,7 +270,7 @@ export default function TeamDetailPage() {
                                         <div className="flex items-center space-x-3">
                                             <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-sm overflow-hidden border border-gray-200 dark:border-gray-600">
                                                 {leave.user?.avatarUrl ? (
-                                                    <img src={leave.user.avatarUrl} alt={leave.user.displayName} className="w-full h-full object-cover" />
+                                                    <img src={leave.user.avatarUrl} alt={leave.user.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                                 ) : (
                                                     <span className="font-bold text-gray-500">{leave.user?.displayName?.charAt(0)}</span>
                                                 )}

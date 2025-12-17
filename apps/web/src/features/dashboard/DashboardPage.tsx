@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import CalendarView from "../../components/CalendarView";
+import AllLeavesList from "./components/AllLeavesList";
 import LeaveRequestModal from "../request/LeaveRequestModal";
 import { Plus } from "lucide-react";
 import { api } from "../../api/client";
 import { ErrorBoundary } from "../../components/ErrorBoundary";
 
+import { useWebSocket } from "../../context/WebSocketContext";
+
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { lastMessage } = useWebSocket();
 
   const [stats, setStats] = useState({ upcomingLeaves: 0, teamMembersOnLeave: 0 });
 
@@ -14,6 +18,13 @@ export default function DashboardPage() {
     const [editLeave, setEditLeave] = useState<any>(null);
     const [teams, setTeams] = useState<any[]>([]);
     const [filter, setFilter] = useState<{ type: 'MINE' | 'TEAM', teamId?: string }>({ type: 'MINE' });
+
+    useEffect(() => {
+        if (lastMessage?.event?.startsWith('LEAVE_')) {
+            console.log("Refreshing dashboard due to real-time update", lastMessage);
+            setRefreshTrigger(prev => prev + 1);
+        }
+    }, [lastMessage]);
 
     const handleSuccess = () => {
         setRefreshTrigger(prev => prev + 1);
@@ -87,6 +98,10 @@ export default function DashboardPage() {
           <ErrorBoundary>
               <CalendarView refreshTrigger={refreshTrigger} onEditLeave={handleEditLeave} filter={filter} />
           </ErrorBoundary>
+      </div>
+
+      <div className="mt-8">
+          <AllLeavesList refreshTrigger={refreshTrigger} />
       </div>
 
       <LeaveRequestModal 

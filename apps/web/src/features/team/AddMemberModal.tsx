@@ -118,7 +118,7 @@ export default function AddMemberModal({ isOpen, onClose, teamId, onSuccess }: {
                                             className="p-2 flex items-center space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors"
                                         >
                                             <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-xs font-bold">
-                                                {user.avatarUrl ? <img src={user.avatarUrl} className="w-full h-full rounded-full object-cover" /> : user.displayName.charAt(0)}
+                                                {user.avatarUrl ? <img src={user.avatarUrl} className="w-full h-full rounded-full object-cover" referrerPolicy="no-referrer" /> : user.displayName.charAt(0)}
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-gray-900 dark:text-white">{user.displayName}</p>
@@ -135,7 +135,7 @@ export default function AddMemberModal({ isOpen, onClose, teamId, onSuccess }: {
                         <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-xs font-bold">
-                                    {selectedUser.avatarUrl ? <img src={selectedUser.avatarUrl} className="w-full h-full rounded-full object-cover" /> : selectedUser.displayName.charAt(0)}
+                                    {selectedUser.avatarUrl ? <img src={selectedUser.avatarUrl} className="w-full h-full rounded-full object-cover" referrerPolicy="no-referrer" /> : selectedUser.displayName.charAt(0)}
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-gray-900 dark:text-white">{selectedUser.displayName}</p>

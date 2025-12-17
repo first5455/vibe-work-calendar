@@ -190,7 +190,7 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
                             <div className="flex items-center space-x-3">
                                 <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                                      {leave.user?.avatarUrl ? (
-                                        <img src={leave.user.avatarUrl} alt={leave.user.displayName} className="w-full h-full object-cover" />
+                                        <img src={leave.user.avatarUrl} alt={leave.user.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                      ) : (
                                         <span className="text-xs font-bold text-gray-500">{leave.user?.displayName?.charAt(0)}</span>
                                      )}
@@ -229,7 +229,7 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
                           <div className="flex items-center">
                               <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold mr-2 overflow-hidden">
                                   {selectedLeave.user.avatarUrl ? (
-                                      <img src={selectedLeave.user.avatarUrl} alt={selectedLeave.user.displayName} className="w-full h-full object-cover" />
+                                      <img src={selectedLeave.user.avatarUrl} alt={selectedLeave.user.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                                   ) : (
                                       selectedLeave.user.displayName.charAt(0)
                                   )}
