@@ -108,7 +108,7 @@ export const LeaveService = {
 
 
   async updateLeave(id: string, data: { type?: "SICK" | "VACATION" | "PERSONAL", startDate?: string, endDate?: string, reason?: string, attachments?: any[] }) {
-      const [leave] = await db.transaction(async (tx) => {
+      await db.transaction(async (tx) => {
           if (data.attachments) {
               // Fetch existing attachments to compare
               const existingAttachments = await tx.select().from(attachments).where(eq(attachments.leaveRequestId, id));
