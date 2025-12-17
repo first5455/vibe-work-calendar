@@ -70,7 +70,7 @@ services:
     user: postgres:postgres # Run as postgres user to avoid permission issues
     volumes:
       # Where to save the backups on your server
-      - ./backups/database:/backups
+      - ~/infra/backups/calendar/database:/backups
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_DB=${DB_NAME}
@@ -99,7 +99,7 @@ services:
       # 1. The Data to Backup (Read Only)
       - minio_data:/backup/source:ro
       # 2. Where to save the zipped backup
-      - ./backups/minio:/backup/archive
+      - ~/infra/backups/calendar/minio:/backup/archive
 
 volumes:
   postgres_data:
