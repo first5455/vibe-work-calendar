@@ -2,10 +2,16 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Plus, User, Shield, Crown } from "lucide-react";
 import { api } from "../../api/client";
+import AlertDialog from "../../components/ui/AlertDialog";
 
 export default function TeamView() {
+  const [alertInfo, setAlertInfo] = useState<{ open: boolean, title: string, message: string, type: 'error' | 'success' | 'info' }>({ 
+    open: false, 
+    title: "", 
+    message: "", 
+    type: 'info' 
+  });
   const [teams, setTeams] = useState<any[]>([]);
-  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -45,20 +51,25 @@ export default function TeamView() {
           window.location.reload(); 
       } catch (e) {
           console.error("Failed to create team", e);
-          alert("Failed to create team");
+          setAlertInfo({ 
+             open: true, 
+             title: "Error", 
+             message: "Failed to create team. Please try again.", 
+             type: 'error' 
+          });
       }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Teams</h2>
            <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your workspaces and members</p>
         </div>
         <button 
             onClick={handleCreateTeam}
-            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm shadow-indigo-200 transition-all"
+            className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-sm shadow-indigo-200 transition-all w-full md:w-auto"
         >
           <Plus className="w-5 h-5 mr-2" />
           Create Team
@@ -90,7 +101,7 @@ export default function TeamView() {
                  <div className="flex items-center space-x-3">
                      <div className="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-semibold text-lg overflow-hidden">
                          {team.logoUrl ? (
-                             <img src={team.logoUrl} alt={team.name} className="w-full h-full object-cover" />
+                             <img src={team.logoUrl} alt={team.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                          ) : (
                              team.name.charAt(0)
                          )}
@@ -108,7 +119,7 @@ export default function TeamView() {
                      {team.members && team.members.map((member: any) => (
                          <div key={member.id} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 overflow-hidden" title={member.displayName}>
                              {member.avatarUrl ? (
-                                 <img src={member.avatarUrl} alt={member.displayName} className="w-full h-full object-cover" />
+                                 <img src={member.avatarUrl} alt={member.displayName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                              ) : (
                                  <span className="font-medium text-gray-600 dark:text-gray-300">{member.displayName.charAt(0).toUpperCase()}</span>
                              )}
@@ -127,6 +138,13 @@ export default function TeamView() {
           </div>
         )))}
       </div>
+      <AlertDialog 
+        isOpen={alertInfo.open} 
+        onClose={() => setAlertInfo(prev => ({ ...prev, open: false }))}
+        title={alertInfo.title}
+        message={alertInfo.message}
+        type={alertInfo.type}
+      />
     </div>
   );
 }

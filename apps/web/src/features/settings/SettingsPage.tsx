@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../../api/client";
 import AvatarUpload from "../../components/upload/AvatarUpload";
+import AlertDialog from "../../components/ui/AlertDialog";
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(false);
@@ -8,6 +9,13 @@ export default function SettingsPage() {
         displayName: "",
         email: "", // Read only
         avatarUrl: ""
+    });
+
+    const [alertInfo, setAlertInfo] = useState<{ open: boolean, title: string, message: string, type: 'error' | 'success' | 'info' }>({ 
+        open: false, 
+        title: "", 
+        message: "", 
+        type: 'info' 
     });
 
     useEffect(() => {
@@ -34,10 +42,10 @@ export default function SettingsPage() {
         try {
             const { error }: any = await (api.users as any).me.patch({ displayName: formData.displayName });
             if (error) throw error;
-            alert("Profile updated successfully");
+            setAlertInfo({ open: true, title: "Success", message: "Profile updated successfully", type: 'success' });
         } catch (e) {
             console.error("Failed to update profile", e);
-            alert("Failed to update profile");
+            setAlertInfo({ open: true, title: "Error", message: "Failed to update profile", type: 'error' });
         } finally {
             setLoading(false);
         }
@@ -89,6 +97,13 @@ export default function SettingsPage() {
                     </div>
                 </form>
             </div>
+            <AlertDialog 
+                isOpen={alertInfo.open} 
+                onClose={() => setAlertInfo(prev => ({ ...prev, open: false }))}
+                title={alertInfo.title}
+                message={alertInfo.message}
+                type={alertInfo.type}
+            />
         </div>
     );
 }
