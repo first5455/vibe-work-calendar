@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted 
+    runs-on: ubuntu-latest 
     # ^ Since this runner is ONLY attached to this repo, 
     # "self-hosted" automatically finds the correct "home-server-calendar" runner.
 
