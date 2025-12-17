@@ -1,4 +1,4 @@
-import { Elysia } from "elysia";
+
 
 // Simple in-memory store for connected clients (using a Set of ws instances)
 // In a real generic service, we might not have direct access to the 'app' instance easily 
