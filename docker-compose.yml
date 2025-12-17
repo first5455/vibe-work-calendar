@@ -63,6 +63,43 @@ services:
     ports:
       - "8083:80"
 
+  # --- Backup ---
+  db-backup:
+    image: prodrigestivill/postgres-backup-local
+    restart: always
+    user: postgres:postgres # Run as postgres user to avoid permission issues
+    volumes:
+      # Where to save the backups on your server
+      - ./backups/database:/backups
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      # Schedule: Run every day at 03:00 AM
+      - SCHEDULE=@daily
+      # Rotation: Keep last 7 days, delete older
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+    depends_on:
+      - postgres
+
+  minio-backup:
+    image: offen/docker-volume-backup:latest
+    restart: always
+    environment:
+      # Schedule: Run every day at 04:00 AM
+      - BACKUP_CRON_EXPRESSION=0 4 * * *
+      # Keep last 7 days
+      - BACKUP_RETENTION_DAYS=7
+      # Name of the backup file
+      - BACKUP_FILENAME=minio-backup-%Y-%m-%dT%H-%M-%S.tar.gz
+    volumes:
+      # 1. The Data to Backup (Read Only)
+      - minio_data:/backup/source:ro
+      # 2. Where to save the zipped backup
+      - ./backups/minio:/backup/archive
 
 volumes:
   postgres_data:
