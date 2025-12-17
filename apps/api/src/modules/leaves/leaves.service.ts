@@ -203,11 +203,10 @@ export const LeaveService = {
             gt(leaves.startDate, today.toISOString())
         ));
 
-    // Count monthly leaves for user
+    // Count monthly leaves for ALL users
     const [monthly] = await db.select({ count: sql<number>`count(*)` })
         .from(leaves)
         .where(and(
-            eq(leaves.userId, userId),
             gte(leaves.startDate, startOfMonth.toISOString()),
             lte(leaves.startDate, endOfMonth.toISOString())
         ));
