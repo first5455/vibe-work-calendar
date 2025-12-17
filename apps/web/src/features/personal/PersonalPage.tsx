@@ -59,7 +59,7 @@ export default function PersonalPage() {
                     className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center justify-center shadow-lg shadow-indigo-500/20 w-full md:w-auto"
                 >
                     <Calendar className="w-4 h-4 mr-2" />
-                    Request Leave
+                    Save Leave
                 </button>
             </div>
 

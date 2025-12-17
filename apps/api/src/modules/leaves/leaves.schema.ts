@@ -20,4 +20,10 @@ export const UpdateLeaveSchema = t.Object({
   startDate: t.Optional(t.String()),
   endDate: t.Optional(t.String()),
   reason: t.Optional(t.String()),
+  attachments: t.Optional(t.Array(t.Object({
+      fileKey: t.String(),
+      originalName: t.String(),
+      mimeType: t.String(),
+      fileUrl: t.String()
+  })))
 });

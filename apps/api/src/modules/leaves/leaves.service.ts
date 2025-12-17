@@ -2,6 +2,7 @@ import { db } from "../../db";
 import { leaves, teamMembers, attachments } from "../../db/schema";
 import { eq, and, sql, gt, lte, gte, inArray } from "drizzle-orm";
 import { config } from "../../config/env";
+import { UploadService } from "../uploads/uploads.service";
 
 export const LeaveService = {
   async createLeaveRequest(userId: string, data: { 
@@ -106,15 +107,77 @@ export const LeaveService = {
   },
 
 
-  async updateLeave(id: string, data: { type?: "SICK" | "VACATION" | "PERSONAL", startDate?: string, endDate?: string, reason?: string }) {
-      const [leave] = await db.update(leaves)
-          .set(data)
-          .where(eq(leaves.id, id))
-          .returning();
-      return leave;
+  async updateLeave(id: string, data: { type?: "SICK" | "VACATION" | "PERSONAL", startDate?: string, endDate?: string, reason?: string, attachments?: any[] }) {
+      const [leave] = await db.transaction(async (tx) => {
+          if (data.attachments) {
+              // Fetch existing attachments to compare
+              const existingAttachments = await tx.select().from(attachments).where(eq(attachments.leaveRequestId, id));
+              const newFileKeys = new Set(data.attachments.map(a => a.fileKey));
+
+              // Identify files to delete from MinIO
+              const filesToDelete = existingAttachments.filter(att => !newFileKeys.has(att.fileKey));
+              for (const file of filesToDelete) {
+                  await UploadService.deleteFile(file.fileKey);
+              }
+
+              // Replace all attachments in DB
+              await tx.delete(attachments).where(eq(attachments.leaveRequestId, id));
+              
+              if (data.attachments.length > 0) {
+                  await tx.insert(attachments).values(
+                      data.attachments.map(att => ({
+                          leaveRequestId: id,
+                          fileKey: att.fileKey,
+                          originalName: att.originalName,
+                          mimeType: att.mimeType || "application/octet-stream"
+                      }))
+                  );
+              }
+          }
+
+          const [updated] = await tx.update(leaves)
+              .set({
+                  type: data.type,
+                  startDate: data.startDate,
+                  endDate: data.endDate,
+                  reason: data.reason
+              })
+              .where(eq(leaves.id, id))
+              .returning();
+          
+          return [updated];
+      });
+      
+      // Re-fetch to get complete object with attachments
+      const [completeLeave] = await db.query.leaves.findMany({
+          where: eq(leaves.id, id),
+          with: {
+              user: { columns: { displayName: true, avatarUrl: true } },
+              attachments: true
+          }
+      });
+      
+      // Transform attachments URL
+      return {
+          ...completeLeave,
+          attachments: completeLeave.attachments.map((att: any) => ({
+              ...att,
+              fileUrl: `${config.MINIO_ENDPOINT}/${config.MINIO_BUCKET}/${att.fileKey}`
+          }))
+      };
   },
 
   async deleteLeave(id: string) {
+    const existingAttachments = await db.select().from(attachments).where(eq(attachments.leaveRequestId, id));
+    
+    // Delete files from MinIO
+    for (const file of existingAttachments) {
+        await UploadService.deleteFile(file.fileKey);
+    }
+    
+    // Attachments will be deleted by CASCADE if configured, but here we might need manual delete if no cascade
+    await db.delete(attachments).where(eq(attachments.leaveRequestId, id));
+
     const [leave] = await db.delete(leaves)
         .where(eq(leaves.id, id))
         .returning();

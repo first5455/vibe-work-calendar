@@ -374,6 +374,12 @@ export default function TeamDetailPage() {
                 isOpen={isEditModalOpen} 
                 onClose={() => { setIsEditModalOpen(false); setEditLeave(null); }} 
                 initialData={editLeave}
+                onSuccess={() => {
+                    // Refresh leaves
+                    (api.leaves as any).team({ teamId }).get().then(({ data }: any) => {
+                        if (data) setLeaves(data);
+                    });
+                }}
             />
 
             <AddMemberModal

@@ -6,6 +6,11 @@
 
 - **Real-time Updates**: Implemented WebSocket connections for instant dashboard updates. Changes to leaves are now reflected immediately across all connected clients without manual refresh.
 - **WebSocket Heartbeat**: Added connection stability checks (ping-pong) to ensure reliability behind proxies like Cloudflare Tunnel.
+- **Leave Permissions**: Implemented strict ownership checks. Users can only edit/delete their own leaves. Added "Read-Only" mode for viewing other users' requests.
+- **UI Enhancements**:
+  - Redesigned Leave Request Modal with wider layout and improved spacing.
+  - Added "Category" column and filters (Personal vs Team) to the All Leaves dashboard.
+  - Restored dashboard statistics counting.
 
 ### Bug Fixes
 

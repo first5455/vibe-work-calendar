@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 
-export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter = { type: 'MINE' } }: { refreshTrigger?: number, onEditLeave?: (leave: any) => void, filter?: { type: 'MINE' | 'TEAM', teamId?: string } }) {
+export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter = { type: 'MINE' } }: { refreshTrigger?: number, onEditLeave?: (leave: any) => void, filter?: { type: 'MINE' | 'TEAM' | 'ALL', teamId?: string } }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date()); // For mobile agenda view
   const [leaves, setLeaves] = useState<any[]>([]);
@@ -27,6 +27,9 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
              } else if (filter.type === 'TEAM' && filter.teamId) {
                  const { data, error } = await (api.leaves as any).team({ teamId: filter.teamId }).get();
                  if (error) console.error("Team leaves fetch error", error);
+                 fetchedLeaves = data || [];
+             } else if (filter.type === 'ALL') {
+                 const { data } = await (api.leaves as any).all.get();
                  fetchedLeaves = data || [];
              }
 
@@ -269,7 +272,7 @@ export default function CalendarView({ refreshTrigger = 0, onEditLeave, filter =
                                 }}
                                 className="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition-colors shadow-sm"
                               >
-                                  Edit Request
+                                  Edit Leave
                               </button>
                           </div>
                       )}
