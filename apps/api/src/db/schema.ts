@@ -34,7 +34,7 @@ export const leaves = pgTable("leaves", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id).notNull(),
   teamId: uuid("team_id").references(() => teams.id),
-  type: text("type", { enum: ["SICK", "VACATION", "PERSONAL"] }).notNull(),
+  type: text("type", { enum: ["SICK", "VACATION", "WFH", "PERSONAL"] }).notNull(),
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),
   reason: text("reason"),

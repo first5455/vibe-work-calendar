@@ -159,6 +159,7 @@ export default function LeaveRequestModal({ isOpen, onClose, onSuccess, initialD
                             <option value="SICK">Sick Leave 🤒</option>
                             <option value="VACATION">Vacation 🏖️</option>
                             <option value="WFH">Work from Home 🏠</option>
+                            <option value="PERSONAL">Personal Leave 👤</option>
                         </select>
                     </div>
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.3.4 (2025-12-17)
+
+### New Features
+
+- **Leave Types**: Added support for "Work from Home" (`WFH`) and "Personal Leave" categories.
+
+### Bug Fixes
+
+- **Leave Updates**: Fixed an issue where updating a leave request (e.g., changing Team Context) would not save correctly.
+
 ## 1.3.3 (2025-12-17)
 
 ### Bug Fixes
