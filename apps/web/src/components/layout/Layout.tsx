@@ -91,7 +91,7 @@ export default function Layout() {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">VibeCal</span>
+          <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">VCalendar</span>
           <div className="w-8" /> {/* Spacer for centering if needed, or user avatar later */}
         </header>
         
