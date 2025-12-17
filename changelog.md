@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.3 (2025-12-17)
+
+### Bug Fixes
+
+- **File Attachments**: Fixed file preview URLs incorrectly using internal Docker addresses. Now correctly uses the public MinIO URL for accessible downloads and previews.
+
 ## 1.3.2 (2025-12-17)
 
 ### Bug Fixes

@@ -55,7 +55,7 @@ export const LeaveService = {
         ...leave,
         attachments: leave.attachments ? leave.attachments.map((att: any) => ({
             ...att,
-            fileUrl: `${config.MINIO_ENDPOINT}/${config.MINIO_BUCKET}/${att.fileKey}`
+            fileUrl: `${config.MINIO_PUBLIC_URL}/${config.MINIO_BUCKET}/${att.fileKey}`
         })) : []
     }));
   },
@@ -78,7 +78,7 @@ export const LeaveService = {
         ...leave,
         attachments: leave.attachments ? leave.attachments.map((att: any) => ({
             ...att,
-            fileUrl: `${config.MINIO_ENDPOINT}/${config.MINIO_BUCKET}/${att.fileKey}`
+            fileUrl: `${config.MINIO_PUBLIC_URL}/${config.MINIO_BUCKET}/${att.fileKey}`
         })) : []
     }));
   },
@@ -101,7 +101,7 @@ export const LeaveService = {
         ...leave,
         attachments: leave.attachments ? leave.attachments.map((att: any) => ({
             ...att,
-            fileUrl: `${config.MINIO_ENDPOINT}/${config.MINIO_BUCKET}/${att.fileKey}`
+            fileUrl: `${config.MINIO_PUBLIC_URL}/${config.MINIO_BUCKET}/${att.fileKey}`
         })) : []
     }));
   },
@@ -162,7 +162,7 @@ export const LeaveService = {
           ...completeLeave,
           attachments: completeLeave.attachments.map((att: any) => ({
               ...att,
-              fileUrl: `${config.MINIO_ENDPOINT}/${config.MINIO_BUCKET}/${att.fileKey}`
+              fileUrl: `${config.MINIO_PUBLIC_URL}/${config.MINIO_BUCKET}/${att.fileKey}`
           }))
       };
   },
@@ -230,7 +230,7 @@ export const LeaveService = {
 
   async canApprove(userId: string, teamId: string) {
       const [member] = await db.select().from(teamMembers)
-        .where(and(eq(teamMembers.userId, userId), eq(teamMembers.teamId, teamId)));
+          .where(and(eq(teamMembers.userId, userId), eq(teamMembers.teamId, teamId)));
       
       return member && (member.role === 'ADMIN' || member.role === 'OWNER');
   }
