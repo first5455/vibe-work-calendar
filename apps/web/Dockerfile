@@ -4,17 +4,20 @@ WORKDIR /app
 # 1. Copy Root Manifests
 COPY package.json bun.lock ./
 
-# --- CRITICAL FIX: Copy Manifests for BOTH Workspaces ---
-# Even though we are building 'web', we need 'api' package.json
-# so the lockfile validation passes.
+# --- CRITICAL FIX: Copy ALL package.json files for workspaces ---
+# We need all workspace package.json files so Bun understands the monorepo structure
 COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web/package.json ./apps/web/package.json
+COPY packages/shared-types/package.json ./packages/shared-types/package.json
 # --------------------------------------------------------
 
 # 2. Install dependencies (Now it works!)
 RUN bun install --frozen-lockfile
 
-# 3. Copy the Web Source Code and API Source (for types)
+# 3. Copy the shared types package (needed by web)
+COPY packages/shared-types ./packages/shared-types
+
+# 4. Copy the Web Source Code and API Source (for types)
 COPY apps/api ./apps/api
 COPY apps/web ./apps/web
 

@@ -1,5 +1,81 @@
 # Changelog
 
+## 1.3.9-beta (2025-12-18)
+
+### Project Infrastructure
+
+- **Shared Types Package**: Created `@vibe/shared-types` workspace package to provide reusable TypeScript types across the monorepo.
+  - Extracted common data models: `User`, `Team`, `Leave`, `Attachment`
+  - Added type safety for data transfer objects
+  - Enabled independent versioning and reusability for future projects (mobile app, admin panel)
+
+### Documentation
+
+- **Comprehensive README**: Expanded from 1 line to 440+ lines with complete project documentation.
+  - Architecture overview with tech stack details
+  - Installation and setup instructions
+  - Development workflow guides
+  - Docker deployment documentation
+  - OAuth setup instructions
+  - Testing guides
+  - Contributing guidelines
+
+### Developer Experience
+
+- **Development Scripts**: Added 23 new npm scripts for improved workflow.
+  - Build commands for all workspaces
+  - Linting and formatting commands
+  - Type checking across all packages
+  - Docker management scripts
+  - Database management (generate, migrate, studio)
+  - Testing commands with coverage support
+
+### Code Quality
+
+- **ESLint Configuration**: Set up TypeScript linting for both API and Web.
+  - Root configuration with shared rules
+  - API-specific rules for Node.js/Bun environment
+  - Web-specific React and TypeScript rules
+- **Prettier**: Configured code formatting with consistent style.
+  - 2-space indentation
+  - Semicolons enabled
+  - 100 character line width
+  - Automatic formatting on save
+
+- **Husky + Lint-staged**: Implemented pre-commit hooks for code quality enforcement.
+  - Automatically lint and format code on commit
+  - Prevent commits with linting errors
+  - Ensure consistent code style across the team
+
+### Testing Infrastructure
+
+- **Backend Testing**: Configured Bun test runner.
+  - Added example tests demonstrating testing patterns
+  - Fast test execution with Bun's built-in runner
+- **Frontend Testing**: Set up Vitest with React Testing Library.
+  - Configured jsdom environment for DOM testing
+  - Added example component tests
+  - Interactive UI mode and coverage reporting
+  - Type-safe test utilities
+
+### Docker
+
+- **Updated Dockerfiles**: Modified both API and Web Dockerfiles to support the new workspace structure.
+  - Added `packages/shared-types` to build context
+  - Ensured proper workspace dependency resolution
+  - Maintained multi-stage builds for optimal image size
+
+### Breaking Changes
+
+- **Workspace Structure**: Added `packages/*` to workspaces configuration.
+- **Dependencies**: Both `apps/api` and `apps/web` now depend on `@vibe/shared-types`.
+
+### Notes
+
+- Project intentionally keeps Eden Treaty's `App` type import pattern for end-to-end type safety (not a coupling issue).
+- Module reorganization (Phase 3) intentionally skipped to avoid breaking changes; can be done as follow-up work.
+- All existing features remain functional; this is purely infrastructure improvement.
+
 ## 1.3.8 (2025-12-18)
 
 ### Dashboard improvements
